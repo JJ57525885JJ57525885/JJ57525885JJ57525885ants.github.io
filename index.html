@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>桌宠商店</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
+            min-height: 100vh;
+            color: #1a237e;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* ========== 顶部导航栏 ========== */
+        .navbar {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            box-shadow: 0 2px 20px rgba(25, 118, 210, 0.10);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 16px;
+            border-bottom: 1px solid rgba(25, 118, 210, 0.08);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #0d47a1;
+            letter-spacing: 0.5px;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #ffffff;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            background: #ffffff;
+            border-radius: 40px;
+            padding: 8px 18px;
+            gap: 8px;
+            border: 1.5px solid #e3f2fd;
+            transition: all 0.25s ease;
+            flex: 1;
+            max-width: 360px;
+            min-width: 200px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        }
+
+        .search-box:focus-within {
+            border-color: #1976d2;
+            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.12);
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            font-size: 15px;
+            color: #1a237e;
+            background: transparent;
+            width: 100%;
+        }
+
+        .search-box input::placeholder {
+            color: #90a4ae;
+        }
+
+        .search-box .search-icon {
+            font-size: 18px;
+            color: #90a4ae;
+            flex-shrink: 0;
+        }
+
+        /* ========== 主内容区域 ========== */
+        .main-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 32px 24px 48px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 650;
+            color: #0d47a1;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.3px;
+        }
+
+        .section-title .dot {
+            width: 8px;
+            height: 8px;
+            background: #1976d2;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* ========== 应用卡片网格 ========== */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 1100px) {
+            .app-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        @media (max-width: 880px) {
+            .app-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 620px) {
+            .app-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 14px;
+            }
+            .main-container {
+                padding: 20px 14px 40px;
+            }
+            .navbar {
+                padding: 12px 16px;
+            }
+            .logo {
+                font-size: 20px;
+            }
+        }
+
+        @media (max-width: 400px) {
+            .app-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+        }
+
+        /* ========== 单个应用卡片 ========== */
+        .app-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 20px 16px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.25s ease;
+            cursor: pointer;
+            border: 1px solid rgba(25, 118, 210, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #1976d2, #42a5f5, #1976d2);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .app-card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 14px 36px rgba(25, 118, 210, 0.14);
+        }
+
+        .app-card:hover::before {
+            opacity: 1;
+        }
+
+        .app-card:active {
+            transform: scale(0.96);
+        }
+
+        .app-icon {
+            width: 84px;
+            height: 84px;
+            border-radius: 22px;
+            object-fit: cover;
+            margin-bottom: 14px;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+            background: #f5f7fa;
+            border: 2px solid #ffffff;
+            transition: transform 0.2s ease;
+        }
+
+        .app-card:hover .app-icon {
+            transform: scale(1.04);
+        }
+
+        .app-name {
+            font-size: 16px;
+            font-weight: 650;
+            color: #0d47a1;
+            margin-bottom: 6px;
+            letter-spacing: 0.3px;
+            line-height: 1.3;
+        }
+
+        .app-size {
+            font-size: 12px;
+            color: #78909c;
+            margin-bottom: 16px;
+            background: #f5f7fa;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-weight: 500;
+        }
+
+        .download-btn {
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            color: #ffffff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 28px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            letter-spacing: 0.4px;
+            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
+            width: 100%;
+            max-width: 140px;
+        }
+
+        .download-btn:hover {
+            background: linear-gradient(135deg, #1565c0, #1e88e5);
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.35);
+            transform: translateY(-2px);
+        }
+
+        .download-btn:active {
+            transform: scale(0.94);
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
+        }
+
+        /* ========== 全屏详情弹窗 ========== */
+        .detail-fullscreen {
+            position: fixed;
+            inset: 0;
+            background: #ffffff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            transform: translateX(100%);
+            transition: transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1);
+            will-change: transform;
+        }
+
+        .detail-fullscreen.open {
+            transform: translateX(0);
+        }
+
+        .detail-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 20px 12px 20px;
+            border-bottom: 1px solid #f0f0f5;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .close-detail-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f5f5fa;
+            border: none;
+            font-size: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            color: #2d2d3f;
+            transition: background 0.2s;
+        }
+
+        .close-detail-btn:hover {
+            background: #e0e0f0;
+        }
+
+        .detail-icon-name {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .detail-icon-name img {
+            width: 48px;
+            height: 48px;
+            border-radius: 16px;
+            object-fit: cover;
+            background: #f5f5fa;
+        }
+
+        .detail-title-block {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-app-name {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d47a1;
+            line-height: 1.2;
+        }
+
+        .detail-version {
+            font-size: 13px;
+            color: #78909c;
+            font-weight: 500;
+        }
+
+        /* 截图滑动区域 */
+        .screenshots-container {
+            padding: 20px 20px 10px;
+            flex-shrink: 0;
+        }
+
+        .screenshots-scroll {
+            display: flex;
+            gap: 12px;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 8px;
+        }
+
+        .screenshots-scroll img {
+            width: 220px;
+            height: 320px;
+            object-fit: cover;
+            border-radius: 20px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+            scroll-snap-align: start;
+            flex-shrink: 0;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            background: #f0f4f8;
+        }
+
+        .screenshots-scroll img:hover {
+            transform: scale(1.02);
+        }
+
+        /* 应用信息区域 */
+        .detail-info {
+            padding: 16px 20px 24px;
+            flex: 1;
+        }
+
+        .detail-info h3 {
+            font-size: 16px;
+            font-weight: 650;
+            color: #0d47a1;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .detail-description {
+            background: #f8faff;
+            border-radius: 16px;
+            padding: 16px;
+            color: #2d2d3f;
+            line-height: 1.6;
+            font-size: 15px;
+            margin-bottom: 16px;
+            border: 1px solid #e3f2fd;
+        }
+
+        .detail-download-btn {
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            color: #ffffff;
+            border: none;
+            border-radius: 30px;
+            padding: 14px 32px;
+            font-size: 17px;
+            font-weight: 650;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
+            transition: all 0.2s ease;
+            letter-spacing: 0.5px;
+            margin-top: 8px;
+        }
+
+        .detail-download-btn:hover {
+            background: linear-gradient(135deg, #1565c0, #1e88e5);
+            box-shadow: 0 8px 24px rgba(25, 118, 210, 0.4);
+            transform: translateY(-2px);
+        }
+        .detail-download-wrapper {
+             padding: 8px 20px 28px;
+             flex-shrink: 0;
+        }
+        
+        .detail-download-btn:active {
+            transform: scale(0.96);
+        }
+
+        /* ========== 图片放大查看器 ========== */
+        .image-viewer {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.92);
+            z-index: 2000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .image-viewer.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .image-viewer img {
+            max-width: 95vw;
+            max-height: 90vh;
+            object-fit: contain;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s ease;
+            cursor: zoom-out;
+        }
+
+        .image-viewer-close {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #ffffff;
+            font-size: 32px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: background 0.2s;
+        }
+
+        .image-viewer-close:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        /* ========== 空状态 ========== */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 60px 20px;
+            color: #78909c;
+            font-size: 15px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state.show {
+            display: block;
+        }
+
+        /* ========== Toast ========== */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: #1a237e;
+            color: #ffffff;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-size: 14px;
+            font-weight: 500;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+            z-index: 9999;
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px 24px 36px;
+            color: #78909c;
+            font-size: 13px;
+            border-top: 1px solid rgba(25, 118, 210, 0.06);
+            margin-top: 12px;
+        }
+
+        /* 响应式细节 */
+        @media (max-width: 500px) {
+            .screenshots-scroll img {
+                width: 160px;
+                height: 240px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <div class="logo-icon">🛍️</div>
+            桌宠商店
+        </div>
+        <div class="search-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="searchInput" placeholder="搜索桌宠应用…">
+        </div>
+    </nav>
+
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <div class="section-title">
+            <span class="dot"></span> 全部应用
+        </div>
+
+        <div class="app-grid" id="appGrid">
+            <!-- 蚁后桌宠卡片 -->
+            <div class="app-card" data-name="蚁后桌宠" data-size=">21MB" data-icon="1.png"
+            data-screenshots='["1.jpg","2.jpg","3.jpg"]' data-download="蚁后.apk"
+            data-version="1.0"
+            data-description="🐜 欢迎来到桌宠商店！这个应用可以在你的屏幕上召唤一只蚁后桌宠，它会一直在屏幕上陪你。你可以拖动它，点击它会有点击音效。通知栏里可以关闭桌宠，也可以到应用内网页控制。让养蚁的乐趣随时相伴！"
+            onclick="openDetail(this)">
+            <img class="app-icon" src="1.png" alt="蚁后桌宠图标"
+            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23e3f2fd%22 width=%22100%22 height=%22100%22/%3E%3Ctext y=%22.9em%22 font-size=%2270%22%3E🐜%3C/text%3E%3C/svg%3E'">
+            <div class="app-name">蚁后桌宠</div>
+            <div class="app-size">&gt;21 MB</div>
+            <button class="download-btn" onclick="event.stopPropagation(); downloadApp('蚁后.apk')">下载</button>
+        </div>
+
+            <!-- 桌宠商店卡片 (新增) -->
+            <div class="app-card" data-name="桌宠商店" data-size="<5MB" data-icon="2.png"
+            data-download="2.apk"
+            data-description="🏪 桌宠商店本身。下载安装后，即可拥有一个轻量级的应用商店，随时浏览和下载最新的桌宠应用。可以下载很多的桌宠。"
+            onclick="openDetail(this)">
+            <img class="app-icon" src="" alt="桌宠商店图标"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+            <div class="app-icon-fallback" style="width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg, #1976d2, #42a5f5);display:none;align-items:center;justify-content:center;font-size:32px;color:#fff;margin-bottom:14px;">🛍️</div>
+            <div class="app-name">桌宠商店</div>
+            <div class="app-size">&lt;5 MB</div>
+            <button class="download-btn" onclick="event.stopPropagation(); downloadApp('2.apk')">下载</button>
+        </div>
+
+        <!-- 空状态 -->
+        <div class="empty-state" id="emptyState">😕 没有找到匹配的应用</div>
+    </div>
+</div>
+
+<!-- 全屏详情弹窗 -->
+<div class="detail-fullscreen" id="detailFullscreen">
+    <div class="detail-header">
+        <div class="detail-icon-name">
+            <img id="detailIcon" src="1.png" alt="图标">
+            <div class="detail-title-block">
+                <span class="detail-app-name" id="detailName">蚁后桌宠</span>
+                <span class="detail-version" id="detailVersion">版本 1.0</span>
+            </div>
+        </div>
+        <button class="close-detail-btn" onclick="closeDetail()">✕</button>
+    </div>
+     <div class="detail-info">
+        <h3>📖 玩法介绍</h3>
+        <div class="detail-description" id="detailDescription"></div>  
+    </div>
+    <div class="screenshots-container">
+        <div class="screenshots-scroll" id="screenshotsScroll"></div>
+    </div>
+     <!-- 下载按钮独立放底部 -->
+    <div class="detail-download-wrapper">
+        <button class="detail-download-btn" id="detailDownloadBtn">下载应用</button>
+    </div>
+</div>
+
+<!-- 图片放大查看器 -->
+<div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
+    <button class="image-viewer-close" onclick="closeImageViewer()">✕</button>
+    <img id="viewerImage" src="" alt="截图放大">
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<div class="footer">© 2025 桌宠商店 · 用爱发电</div>
+
+<script>
+    (function() {
+        'use strict';
+
+        const searchInput = document.getElementById('searchInput');
+        const appGrid = document.getElementById('appGrid');
+        const emptyState = document.getElementById('emptyState');
+        const detailFullscreen = document.getElementById('detailFullscreen');
+        const detailIcon = document.getElementById('detailIcon');
+        const detailName = document.getElementById('detailName');
+        const detailVersion = document.getElementById('detailVersion');
+        const screenshotsScroll = document.getElementById('screenshotsScroll');
+        const detailDescription = document.getElementById('detailDescription');
+        const detailDownloadBtn = document.getElementById('detailDownloadBtn');
+        const imageViewer = document.getElementById('imageViewer');
+        const viewerImage = document.getElementById('viewerImage');
+        const toast = document.getElementById('toast');
+
+        let currentDownloadUrl = '蚁后.apk';
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toast.textContent = msg;
+            toast.classList.add('show');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2200);
+        }
+
+        window.downloadApp = function(url) {
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = '';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            showToast('📥 开始下载，请查看浏览器下载列表');
+        };
+
+        window.openDetail = function(card) {
+            const icon = card.dataset.icon;
+            const name = card.dataset.name;
+            const version = card.dataset.version || '1.0';
+            const description = card.dataset.description || '暂无详细介绍';
+            const screenshots = JSON.parse(card.dataset.screenshots || '[]');
+            const downloadUrl = card.dataset.download || '蚁后.apk';
+
+            // 处理图标：如果卡片没有图标（如桌宠商店），显示一个默认图标
+            if (icon && icon.length > 0) {
+                detailIcon.src = icon;
+            } else {
+                detailIcon.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%231976d2%22 width=%22100%22 height=%22100%22/%3E%3Ctext y=%22.9em%22 font-size=%2270%22%3E🛍️%3C/text%3E%3C/svg%3E';
+            }
+            detailName.textContent = name;
+            detailVersion.textContent = '版本 ' + version;
+            detailDescription.textContent = description;
+            currentDownloadUrl = downloadUrl;
+
+            // 生成截图滑动区域
+            screenshotsScroll.innerHTML = '';
+            if (screenshots.length > 0) {
+                screenshots.forEach(src => {
+                    const img = document.createElement('img');
+                    img.src = src;
+                    img.alt = name + ' 截图';
+                    img.loading = 'lazy';
+                    img.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        openImageViewer(src);
+                    });
+                    img.onerror = function() {
+                        this.style.display = 'none';
+                    };
+                    screenshotsScroll.appendChild(img);
+                });
+            } else {
+                // 如果没有截图，显示占位提示
+                const placeholder = document.createElement('div');
+                placeholder.style.cssText = 'width:100%;text-align:center;color:#90a4ae;padding:20px;';
+                placeholder.textContent = '暂无截图展示';
+                screenshotsScroll.appendChild(placeholder);
+            }
+
+            detailDownloadBtn.onclick = function() {
+                downloadApp(currentDownloadUrl);
+            };
+
+            detailFullscreen.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        };
+
+        window.closeDetail = function() {
+            detailFullscreen.classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        function openImageViewer(src) {
+            viewerImage.src = src;
+            imageViewer.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+
+        window.closeImageViewer = function() {
+            imageViewer.classList.remove('open');
+            document.body.style.overflow = '';
+        };
+
+        // 点击遮罩关闭放大 (已在HTML onclick)
+        imageViewer.addEventListener('click', function(e) {
+            if (e.target === imageViewer) {
+                closeImageViewer();
+            }
+        });
+
+        // ESC 关闭
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                if (imageViewer.classList.contains('open')) {
+                    closeImageViewer();
+                } else if (detailFullscreen.classList.contains('open')) {
+                    closeDetail();
+                }
+            }
+        });
+
+        // 搜索功能
+        searchInput.addEventListener('input', function() {
+            const query = this.value.trim().toLowerCase();
+            const cards = appGrid.querySelectorAll('.app-card');
+            let visible = 0;
+            cards.forEach(card => {
+                const name = (card.dataset.name || '').toLowerCase();
+                if (query === '' || name.includes(query)) {
+                    card.style.display = '';
+                    visible++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            emptyState.classList.toggle('show', visible === 0);
+        });
+
+        // 图标回退
+        document.querySelectorAll('.app-icon').forEach(img => {
+            img.addEventListener('error', function() {
+                // 如果图片加载失败，隐藏自身，显示后面的备用元素
+                this.style.display = 'none';
+                const fallback = this.nextElementSibling;
+                if (fallback && fallback.classList.contains('app-icon-fallback')) {
+                    fallback.style.display = 'flex';
+                }
+            });
+        });
+
+        console.log('🛍️ 桌宠商店已准备就绪');
+    })();
+</script>
+</body>
+</html>
