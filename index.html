@@ -1,789 +1,1133 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>桌宠商店</title>
+    <title>🐜 蚁后桌宠</title>
     <style>
+        /* 全局重置 & 全屏 */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        body {
-            font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 50%, #90caf9 100%);
-            min-height: 100vh;
-            color: #1a237e;
-            user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            box-shadow: 0 2px 20px rgba(25, 118, 210, 0.10);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            padding: 16px 24px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            gap: 16px;
-            border-bottom: 1px solid rgba(25, 118, 210, 0.08);
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 24px;
-            font-weight: 700;
-            color: #0d47a1;
-            letter-spacing: 0.5px;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #1976d2, #42a5f5);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            color: #ffffff;
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            background: #ffffff;
-            border-radius: 40px;
-            padding: 8px 18px;
-            gap: 8px;
-            border: 1.5px solid #e3f2fd;
-            transition: all 0.25s ease;
-            flex: 1;
-            max-width: 360px;
-            min-width: 200px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-        }
-
-        .search-box:focus-within {
-            border-color: #1976d2;
-            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.12);
-        }
-
-        .search-box input {
-            border: none;
-            outline: none;
-            font-size: 15px;
-            color: #1a237e;
-            background: transparent;
+        html, body {
             width: 100%;
-        }
-
-        .search-box input::placeholder {
-            color: #90a4ae;
-        }
-
-        .search-box .search-icon {
-            font-size: 18px;
-            color: #90a4ae;
-            flex-shrink: 0;
-        }
-
-        .main-container {
-            max-width: 1300px;
-            margin: 0 auto;
-            padding: 32px 24px 48px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 650;
-            color: #0d47a1;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            letter-spacing: 0.3px;
-        }
-
-        .section-title .dot {
-            width: 8px;
-            height: 8px;
-            background: #1976d2;
-            border-radius: 50%;
-            display: inline-block;
-        }
-
-        .app-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 20px;
-        }
-
-        @media (max-width: 1100px) {
-            .app-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
-        @media (max-width: 880px) {
-            .app-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 620px) {
-            .app-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 14px;
-            }
-            .main-container {
-                padding: 20px 14px 40px;
-            }
-            .navbar {
-                padding: 12px 16px;
-            }
-            .logo {
-                font-size: 20px;
-            }
-        }
-
-        @media (max-width: 400px) {
-            .app-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 10px;
-            }
-        }
-
-        .app-card {
-            background: #ffffff;
-            border-radius: 20px;
-            padding: 20px 16px 22px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            box-shadow: 0 4px 16px rgba(25, 118, 210, 0.06);
-            transition: transform 0.2s ease, box-shadow 0.25s ease;
-            cursor: pointer;
-            border: 1px solid rgba(25, 118, 210, 0.05);
-            position: relative;
+            height: 100%;
             overflow: hidden;
-        }
-
-        .app-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #1976d2, #42a5f5, #1976d2);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .app-card:hover {
-            transform: translateY(-6px);
-            box-shadow: 0 14px 36px rgba(25, 118, 210, 0.14);
-        }
-
-        .app-card:hover::before {
-            opacity: 1;
-        }
-
-        .app-card:active {
-            transform: scale(0.96);
-        }
-
-        .app-icon {
-            width: 84px;
-            height: 84px;
-            border-radius: 22px;
-            object-fit: cover;
-            margin-bottom: 14px;
-            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-            background: #f5f7fa;
-            border: 2px solid #ffffff;
-            transition: transform 0.2s ease;
-        }
-
-        .app-card:hover .app-icon {
-            transform: scale(1.04);
-        }
-
-        .app-name {
-            font-size: 16px;
-            font-weight: 650;
-            color: #0d47a1;
-            margin-bottom: 6px;
-            letter-spacing: 0.3px;
-            line-height: 1.3;
-        }
-
-        .app-size {
-            font-size: 12px;
-            color: #78909c;
-            margin-bottom: 16px;
-            background: #f5f7fa;
-            padding: 2px 12px;
-            border-radius: 12px;
-            font-weight: 500;
-        }
-
-        .download-btn {
-            background: linear-gradient(135deg, #1976d2, #42a5f5);
-            color: #ffffff;
-            border: none;
-            border-radius: 30px;
-            padding: 10px 28px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            letter-spacing: 0.4px;
-            box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
-            width: 100%;
-            max-width: 140px;
-        }
-
-        .download-btn:hover {
-            background: linear-gradient(135deg, #1565c0, #1e88e5);
-            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.35);
-            transform: translateY(-2px);
-        }
-
-        .download-btn:active {
-            transform: scale(0.94);
-            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
-        }
-
-        .detail-fullscreen {
-            position: fixed;
-            inset: 0;
             background: #ffffff;
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            overflow-y: auto;
-            transform: translateX(100%);
-            transition: transform 0.35s cubic-bezier(0.4, 0.0, 0.2, 1);
-            will-change: transform;
+            font-family: 'Segoe UI', 'PingFang SC', Roboto, 'Helvetica Neue', sans-serif;
+            user-select: none;
         }
 
-        .detail-fullscreen.open {
-            transform: translateX(0);
-        }
-
-        .detail-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 20px 20px 12px 20px;
-            border-bottom: 1px solid #f0f0f5;
-            flex-shrink: 0;
-            position: relative;
-        }
-
-        .close-detail-btn {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: #f5f5fa;
-            border: none;
-            font-size: 22px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            color: #2d2d3f;
-            transition: background 0.2s;
-        }
-
-        .close-detail-btn:hover {
-            background: #e0e0f0;
-        }
-
-        .detail-icon-name {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-
-        .detail-icon-name img {
-            width: 48px;
-            height: 48px;
-            border-radius: 16px;
-            object-fit: cover;
-            background: #f5f5fa;
-        }
-
-        .detail-title-block {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .detail-app-name {
-            font-size: 20px;
-            font-weight: 700;
-            color: #0d47a1;
-            line-height: 1.2;
-        }
-
-        .detail-version {
-            font-size: 13px;
-            color: #78909c;
-            font-weight: 500;
-        }
-
-        .screenshots-container {
-            padding: 20px 20px 10px;
-            flex-shrink: 0;
-        }
-
-        .screenshots-scroll {
-            display: flex;
-            gap: 12px;
-            overflow-x: auto;
-            scroll-snap-type: x mandatory;
-            -webkit-overflow-scrolling: touch;
-            padding-bottom: 8px;
-        }
-
-        .screenshots-scroll img {
-            width: 220px;
-            height: 320px;
-            object-fit: cover;
-            border-radius: 20px;
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
-            scroll-snap-align: start;
-            flex-shrink: 0;
-            cursor: pointer;
-            transition: transform 0.2s ease;
-            background: #f0f4f8;
-        }
-
-        .screenshots-scroll img:hover {
-            transform: scale(1.02);
-        }
-
-        .detail-info {
-            padding: 16px 20px 24px;
-            flex: 1;
-        }
-
-        .detail-info h3 {
-            font-size: 16px;
-            font-weight: 650;
-            color: #0d47a1;
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .detail-description {
-            background: #f8faff;
-            border-radius: 16px;
-            padding: 16px;
-            color: #2d2d3f;
-            line-height: 1.6;
-            font-size: 15px;
-            margin-bottom: 16px;
-            border: 1px solid #e3f2fd;
-        }
-
-        .detail-download-btn {
-            background: linear-gradient(135deg, #1976d2, #42a5f5);
-            color: #ffffff;
-            border: none;
-            border-radius: 30px;
-            padding: 14px 32px;
-            font-size: 17px;
-            font-weight: 650;
-            cursor: pointer;
-            width: 100%;
-            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.3);
-            transition: all 0.2s ease;
-            letter-spacing: 0.5px;
-            margin-top: 8px;
-        }
-
-        .detail-download-btn:hover {
-            background: linear-gradient(135deg, #1565c0, #1e88e5);
-            box-shadow: 0 8px 24px rgba(25, 118, 210, 0.4);
-            transform: translateY(-2px);
-        }
-        .detail-download-wrapper {
-             padding: 8px 20px 28px;
-             flex-shrink: 0;
-        }
-        
-        .detail-download-btn:active {
-            transform: scale(0.96);
-        }
-
-        .image-viewer {
+        /* ========== 加载遮罩 ========== */
+        #loadingOverlay {
             position: fixed;
             inset: 0;
-            background: rgba(0, 0, 0, 0.92);
-            z-index: 2000;
+            z-index: 9999;
+            background: #ffffff;
             display: flex;
             align-items: center;
             justify-content: center;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .image-viewer.open {
+            flex-direction: column;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
             opacity: 1;
             visibility: visible;
         }
-
-        .image-viewer img {
-            max-width: 95vw;
-            max-height: 90vh;
-            object-fit: contain;
-            border-radius: 12px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            transition: transform 0.3s ease;
-            cursor: zoom-out;
+        #loadingOverlay.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
         }
 
-        .image-viewer-close {
-            position: absolute;
-            top: 20px;
-            right: 24px;
-            background: rgba(255, 255, 255, 0.2);
+        .loading-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+            padding: 20px 32px;
+            max-width: 300px;
+            width: 100%;
+        }
+
+        .loading-icon {
+            font-size: 48px;
+            animation: bounceAnt 1.2s ease-in-out infinite;
+        }
+        @keyframes bounceAnt {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-10px) scale(1.06); }
+        }
+
+        .loading-title {
+            font-size: 15px;
+            font-weight: 500;
+            color: #8888a0;
+            letter-spacing: 0.3px;
+        }
+
+        .progress-track {
+            width: 100%;
+            height: 5px;
+            background: #f0edf8;
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #7c5cfc, #a78bfa);
+            border-radius: 20px;
+            transition: width 0.3s cubic-bezier(0.34, 1.2, 0.64, 1);
+        }
+
+        .progress-text {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d2d3f;
+            font-variant-numeric: tabular-nums;
+            min-width: 54px;
+            text-align: center;
+        }
+
+        .loading-sub {
+            font-size: 12px;
+            color: #b8b8d0;
+            margin-top: -2px;
+        }
+
+        /* ========== 主容器 ========== */
+        .app {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: #ffffff;
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            transition: opacity 0.6s ease;
+        }
+        .app.show {
+            opacity: 1;
+        }
+
+        /* -------- 头部（标题 + 关闭按钮 + 权限按钮） -------- */
+        .header {
+            display: flex;
+            justify-content: flex-start;   /* 修改为左对齐 */
+            align-items: center;
+            padding: 62px 24px 2px 24px;
+            flex-shrink: 0;
+            background: #ffffff;
+            z-index: 10;
+            border-bottom: 1px solid #f2f2f8;
+            position: relative;
+            gap: 12px;                     /* 元素之间的间距 */
+        }
+
+        .title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d2d3f;
+        }
+        .title .emoji { font-size: 26px; }
+        .title .badge {
+         background:#0d47a1;
+         color: #bbdefb;  /* 文字颜色保持深灰，确保在两种背景上都可读 */
+         font-size: 10px;
+         font-weight: 500;
+         padding: 8px 10px;
+         border-radius: 20px;
+         margin-left: 4px;
+       }
+        /* 头部右侧按钮容器（关闭 + 权限） */
+        .header-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* 权限按钮 */
+        .permission-wrapper {
+            position: relative;
+            z-index: 20;
+        }
+        .permission-btn {
+            background: #f5f5fa;
             border: none;
+            border-radius: 40px;
+            padding: 8px 18px 8px 16px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #3d3d50;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s;
+        }
+        .permission-btn:hover { background: #eeedf5; }
+        .permission-btn:active { transform: scale(0.96); }
+        .permission-btn .icon { font-size: 18px; }
+        .permission-btn .arrow {
+            font-size: 12px;
+            transition: transform 0.25s ease;
+            margin-left: 2px;
+        }
+        .permission-btn .arrow.open { transform: rotate(180deg); }
+
+        /* 红色关闭按钮（复用权限按钮尺寸，覆盖颜色） */
+        .permission-btn.close-btn {
+            background: #e63946;
             color: #ffffff;
-            font-size: 32px;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+            border: none;
+        }
+        .permission-btn.close-btn:hover {
+            background: #d32f2f;
+        }
+        .permission-btn.close-btn:active {
+            background: #b71c1c;
+            transform: scale(0.96);
+        }
+
+        /* ===== 新增：灰色退出网页按钮 ===== */
+        .permission-btn.exit-btn {
+            background: #6c757d;
+            color: #ffffff;
+            border: none;
+        }
+        .permission-btn.exit-btn:hover {
+            background: #5a6268;
+        }
+        .permission-btn.exit-btn:active {
+            background: #495057;
+            transform: scale(0.96);
+        }
+
+        /* 权限下拉面板 */
+        .permission-dropdown {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            background: #ffffff;
+            border-radius: 20px;
+            min-width: 240px;
+            padding: 8px 0;
+            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.10), 0 4px 14px rgba(0, 0, 0, 0.04);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-6px) scale(0.96);
+            transform-origin: top right;
+            transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+            border: 1px solid rgba(0, 0, 0, 0.02);
+            max-height: 420px;
+            overflow-y: auto;
+            width: 280px;
+        }
+        .permission-dropdown.open {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0) scale(1);
+        }
+        .permission-dropdown .dropdown-header {
+            padding: 14px 22px 8px 22px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #8888a0;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid #f2f2f8;
+            margin-bottom: 4px;
+        }
+        .permission-dropdown .item {
+            padding: 12px 22px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.15s;
+            font-size: 15px;
+            color: #2d2d3f;
+            font-weight: 450;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .permission-dropdown .item:hover { background: #f7f6fc; }
+        .permission-dropdown .item:active { background: #eeecf5; }
+        .permission-dropdown .item .icon { font-size: 20px; width: 28px; text-align: center; flex-shrink: 0; }
+        .permission-dropdown .item .label { flex: 1; }
+        .permission-dropdown .dropdown-footer {
+            padding: 10px 22px 14px 22px;
+            font-size: 12px;
+            color: #b0b0c8;
+            border-top: 1px solid #f2f2f8;
+            margin-top: 4px;
+            text-align: center;
+        }
+
+        /* -------- 视频区域（flex:1 自动填满剩余空间） -------- */
+        .video-wrapper {
+            flex: 1;
+            min-height: 0;
+            background: #fafaff;
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: hidden;
+        }
+        .video-wrapper video {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: contain;
+            background: #f8f8fe;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 封面图片往上移一点 */
+        .video-wrapper .poster-img {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #fafaff;
             cursor: pointer;
-            backdrop-filter: blur(10px);
+            z-index: 5;
+            transition: opacity 0.3s ease;
+            opacity: 1;
+            transform: translateY(-10px);
+        }
+        .video-wrapper .poster-img.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .video-wrapper .poster-fallback {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: #b8b8d0;
+            background: #fafaff;
+            z-index: 4;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .video-wrapper .poster-fallback.show {
+            opacity: 1;
+        }
+
+        /* -------- 控制栏（底部）—— 固定定位 -------- */
+        .controls {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            padding: 0px 24px;
+            flex-shrink: 0;
+            background: #ffffff;
+            border-top: 1px solid #f2f2f8;
+            flex-wrap: wrap;
+            position: fixed;
+            bottom: 54px;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.04);
+        }
+        .controls .btn-group {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .ctrl-btn {
+            padding: 10px 28px;
+            border: none;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.15s, opacity 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f5f5fa;
+            color: #3d3d50;
+            position: relative;
+            z-index: 101;
+        }
+        .ctrl-btn:hover:not(:disabled) { background: #eeedf5; transform: translateY(-1px); }
+        .ctrl-btn:active:not(:disabled) { transform: scale(0.96); }
+        .ctrl-btn:disabled { opacity: 0.35; cursor: not-allowed; transform: none; }
+        .ctrl-btn.primary {
+            background: #7c5cfc;
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(124, 92, 252, 0.28);
+        }
+        .ctrl-btn.primary:hover:not(:disabled) {
+            background: #6f4cf0;
+            box-shadow: 0 6px 20px rgba(124, 92, 252, 0.32);
+        }
+        .ctrl-btn.primary:active:not(:disabled) { background: #6240e0; }
+        .ctrl-btn .icon { font-size: 18px; line-height: 1; }
+        .controls .info {
+            font-size: 13px;
+            color: #a8a8be;
+            font-weight: 450;
+            min-width: 80px;
+            text-align: center;
+            position: relative;
+            z-index: 101;
+        }
+
+        /* -------- 作者按钮（右下角） -------- */
+        .author-wrapper {
+            position: fixed;
+            bottom: 62px;
+            right: 30px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        .author-btn {
+            border: none;
+            background: #ffffff;
+            padding: 0;
+            cursor: pointer;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+            transition: transform 0.25s ease, box-shadow 0.25s ease;
+            width: 70px;
+            height: 70px;
+            border: 2px solid #ffffff;
+            outline: 1px solid rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f5f5fa;
+            font-size: 14px;
+            font-weight: 600;
+            color: #3d3d50;
+            flex-direction: column;
+            position: relative;
+            z-index: 101;
+        }
+        .author-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 8px 28px rgba(0, 0, 0, 0.12);
+        }
+        .author-btn:active { transform: scale(0.92); }
+        .author-btn img {
+            width: 100%;
+            height: 100%;
+            display: block;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        .author-btn .author-text {
+            position: absolute;
+            bottom: 2px;
+            background: rgba(255,255,255,0.85);
+            padding: 0 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #2d2d3f;
+            backdrop-filter: blur(4px);
+            line-height: 1.6;
+            white-space: nowrap;
+            border: 1px solid rgba(0,0,0,0.04);
+        }
+        .author-btn .fallback-text {
+            display: none;
+            font-size: 28px;
+        }
+        .author-btn img.error + .fallback-text { display: block; }
+        .author-btn img.error { display: none; }
+
+        /* -------- 模态框 -------- */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 20px;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-box {
+            background: #ffffff;
+            border-radius: 32px;
+            max-width: 400px;
+            width: 100%;
+            padding: 32px 28px 28px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.20);
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s;
+            opacity: 0;
+            text-align: center;
+        }
+        .modal-overlay.open .modal-box {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        .modal-box .avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 16px;
+            display: block;
+            border: 3px solid #f0edff;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+        }
+        .modal-box h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #2d2d3f;
+            margin-bottom: 6px;
+        }
+        .modal-box .sub {
+            font-size: 14px;
+            color: #8888a0;
+            margin-bottom: 16px;
+        }
+        .modal-box .desc {
+            font-size: 15px;
+            color: #3d3d50;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+        .modal-box .close-btn {
+            background: #f5f5fa;
+            border: none;
+            padding: 10px 32px;
+            border-radius: 40px;
+            font-size: 15px;
+            font-weight: 500;
+            color: #3d3d50;
+            cursor: pointer;
             transition: background 0.2s;
         }
+        .modal-box .close-btn:hover { background: #eeedf5; }
 
-        .image-viewer-close:hover {
-            background: rgba(255, 255, 255, 0.35);
-        }
-
-        .empty-state {
-            display: none;
-            text-align: center;
-            padding: 60px 20px;
-            color: #78909c;
-            font-size: 15px;
-            grid-column: 1 / -1;
-        }
-
-        .empty-state.show {
-            display: block;
-        }
-
+        /* -------- Toast -------- */
         .toast {
             position: fixed;
-            bottom: 40px;
+            top: 30px;
             left: 50%;
-            transform: translateX(-50%) translateY(20px);
-            background: #1a237e;
+            transform: translateX(-50%) translateY(-20px);
+            background: #2d2d3f;
             color: #ffffff;
             padding: 12px 28px;
             border-radius: 40px;
             font-size: 14px;
-            font-weight: 500;
-            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.18);
+            font-weight: 450;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
             z-index: 9999;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            pointer-events: none;
+            max-width: 90vw;
         }
-
         .toast.show {
             opacity: 1;
             visibility: visible;
             transform: translateX(-50%) translateY(0);
         }
+        .toast .emoji { font-size: 18px; }
 
-        .footer {
-            text-align: center;
-            padding: 20px 24px 36px;
-            color: #78909c;
-            font-size: 13px;
-            border-top: 1px solid rgba(25, 118, 210, 0.06);
-            margin-top: 12px;
+        /* -------- 响应式 -------- */
+        @media (max-width: 600px) {
+            .header { padding: 54px 16px 1px 16px; gap: 8px; }
+            .title { font-size: 17px; }
+            .title .emoji { font-size: 22px; }
+            .permission-btn { font-size: 12px; padding: 6px 14px 6px 12px; }
+            .permission-btn .icon { font-size: 16px; }
+            .permission-dropdown { min-width: 200px; right: -8px; }
+            .permission-dropdown .item { padding: 10px 16px; font-size: 14px; }
+            .controls { padding: 0px 16px; gap: 10px; bottom: 44px; }
+            .ctrl-btn { padding: 8px 18px; font-size: 13px; }
+            .controls .info { font-size: 12px; min-width: 60px; }
+            .author-wrapper { bottom: 62px; right: 20px; }
+            .author-btn { width: 60px; height: 60px; }
+            .author-btn .author-text { font-size: 11px; padding: 0 8px; }
+            .modal-box { padding: 24px 20px 20px; }
+            .modal-box .avatar { width: 80px; height: 80px; }
+            .video-wrapper .poster-img { transform: translateY(-8px); }
+            /* 确保小屏幕上退出按钮也能显示 */
+            .header-actions { gap: 6px; }
         }
-
-        @media (max-width: 500px) {
-            .screenshots-scroll img {
-                width: 160px;
-                height: 240px;
-            }
+        @media (max-width: 400px) {
+            .header { padding: 44px 12px 0px 12px; }
+            .title { font-size: 15px; }
+            .permission-btn { font-size: 11px; padding: 4px 10px; }
+            .ctrl-btn { padding: 6px 14px; font-size: 12px; }
+            .controls { padding: 0px 12px; bottom: 34px; }
+            .author-btn { width: 52px; height: 52px; }
+            .author-wrapper { bottom: 62px; right: 14px; }
+            .video-wrapper .poster-img { transform: translateY(-6px); }
+            .header-actions { gap: 4px; }
         }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="logo">
-            <div class="logo-icon">🛍️</div>
-            桌宠商店
+    <!-- ========== 加载遮罩 ========== -->
+    <div id="loadingOverlay">
+        <div class="loading-box">
+            <div class="loading-icon">🐜</div>
+            <div class="loading-title">蚁后桌宠 · 加载中</div>
+            <div class="progress-track">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">0%</div>
+            <div class="loading-sub" id="loadingStatus">准备资源…</div>
         </div>
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="搜索桌宠应用…">
-        </div>
-    </nav>
-
-    <div class="main-container">
-        <div class="section-title">
-            <span class="dot"></span> 全部应用
-        </div>
-
-        <div class="app-grid" id="appGrid">
-            <!-- 蚁后桌宠卡片 -->
-            <div class="app-card" data-name="蚁后桌宠" data-size=">21MB" data-icon="1.png"
-            data-screenshots='["1.jpg","2.jpg","3.jpg"]' data-download="蚁后.apk"
-            data-version="1.0"
-            data-description="🐜 欢迎来到桌宠商店！这个应用可以在你的屏幕上召唤一只蚁后桌宠，它会一直在屏幕上陪你。你可以拖动它，点击它会有点击音效。通知栏里可以关闭桌宠，也可以到应用内网页控制。让养蚁的乐趣随时相伴！"
-            onclick="openDetail(this)">
-            <img class="app-icon" src="1.png" alt="蚁后桌宠图标"
-            onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%23e3f2fd%22 width=%22100%22 height=%22100%22/%3E%3Ctext y=%22.9em%22 font-size=%2270%22%3E🐜%3C/text%3E%3C/svg%3E'">
-            <div class="app-name">蚁后桌宠</div>
-            <div class="app-size">&gt;21 MB</div>
-            <button class="download-btn" onclick="event.stopPropagation(); downloadApp('蚁后.apk')">下载</button>
-        </div>
-
-            <!-- 桌宠商店卡片 -->
-            <div class="app-card" data-name="桌宠商店" data-size="<5MB" data-icon="2.png"
-            data-download="2.apk"
-            data-description="🏪 桌宠商店本身。下载安装后，即可拥有一个轻量级的应用商店，随时浏览和下载最新的桌宠应用。可以下载很多的桌宠。"
-            onclick="openDetail(this)">
-            <img class="app-icon" src="2.png" alt="桌宠商店图标"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-            <div class="app-icon-fallback" style="width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg, #1976d2, #42a5f5);display:none;align-items:center;justify-content:center;font-size:32px;color:#fff;margin-bottom:14px;">🛍️</div>
-            <div class="app-name">桌宠商店</div>
-            <div class="app-size">&lt;5 MB</div>
-            <button class="download-btn" onclick="event.stopPropagation(); downloadApp('2.apk')">下载</button>
-        </div>
-
-        <!-- 独角仙桌宠卡片 (新增) -->
-        <div class="app-card" data-name="独角仙" data-size="~6MB" data-icon="3.png"
-        data-download="3.apk"
-        data-version="1.0"
-        data-description="🪲 独角仙桌宠来啦！一只威武的独角仙在你的屏幕上爬来爬去。点击它会播放音效，拖动它可以随意移动。通知栏里可以关闭桌宠，也可以到应用内网页控制。让这只帅气的甲虫陪你度过每一天！"
-        onclick="openDetail(this)">
-        <img class="app-icon" src="3.png" alt="独角仙图标"
-        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-        <div class="app-icon-fallback" style="width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg, #4CAF50, #8BC34A);display:none;align-items:center;justify-content:center;font-size:32px;color:#fff;margin-bottom:14px;">🪲</div>
-        <div class="app-name">独角仙</div>
-        <div class="app-size">~6 MB</div>
-        <button class="download-btn" onclick="event.stopPropagation(); downloadApp('3.apk')">下载</button>
     </div>
 
-        <!-- 空状态 -->
-        <div class="empty-state" id="emptyState">😕 没有找到匹配的应用</div>
+    <!-- ========== Toast ========== -->
+    <div class="toast" id="toast">
+        <span class="emoji">✨</span>
+        <span class="msg" id="toastMsg">提示</span>
     </div>
-</div>
 
-<div class="detail-fullscreen" id="detailFullscreen">
-    <div class="detail-header">
-        <div class="detail-icon-name">
-            <img id="detailIcon" src="1.png" alt="图标">
-            <div class="detail-title-block">
-                <span class="detail-app-name" id="detailName">蚁后桌宠</span>
-                <span class="detail-version" id="detailVersion">版本 1.0</span>
+    <!-- ========== 主应用 ========== -->
+    <div class="app" id="app">
+
+        <!-- 头部 -->
+        <div class="header">
+            <div class="title">
+                <span class="emoji">🐜</span>
+                <span class="ants"></span>
+                <span class="badge">蚁后桌宠</span>
+            </div>
+            <!-- ===== 新增：头部右侧按钮容器（退出网页 + 关闭 + 权限） ===== -->
+            <div class="header-actions">
+                <!-- ===== 新增：退出网页按钮（灰色，放在关闭按钮左边） ===== -->
+                <button class="permission-btn exit-btn" id="exitPageBtn">
+                   <span class="icon">✕</span>
+                 退出
+                </button>
+                <!-- 红色关闭按钮 -->
+                <button class="permission-btn close-btn" id="closePetBtn">
+                    <span class="icon">✕</span>
+                    关闭
+                </button>
+                <!-- 权限按钮区域 -->
+                <div class="permission-wrapper">
+                    <button class="permission-btn" id="permBtn">
+                        <span class="icon">⚙️</span>
+                        权限
+                        <span class="arrow" id="permArrow">▾</span>
+                    </button>
+                    <div class="permission-dropdown" id="permDropdown">
+                        <div class="dropdown-header">📋 应用所需权限</div>
+                        <button class="item" data-perm="overlay">
+                            <span class="icon">🪟</span>
+                            <span class="label">1. 打开悬浮窗权限</span>
+                        </button>
+                        <button class="item" data-perm="notification">
+                            <span class="icon">🔔</span>
+                            <span class="label">2. 打开通知权限</span>
+                        </button>
+                        <div class="dropdown-footer">1.在系统设置中开启以上权限即可获得桌宠,如果出现点击给权限直接闪退回应用的现象，请手动到系统设置开启。<br>
+                                             2.可长按通知点击结束APP、点击关闭按钮或删除后台关闭桌宠。<br> 
+                                             ⚠︎注:关闭是关闭应用,退出是退出网页    
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
-        <button class="close-detail-btn" onclick="closeDetail()">✕</button>
+
+        <!-- 视频区域 -->
+        <div class="video-wrapper">
+            <video id="petVideo" playsinline preload="metadata" loop>
+                <source src="1.mp4" type="video/mp4">
+                您的浏览器不支持视频播放。
+            </video>
+            <!-- ===== 背景音乐（隐藏） ===== -->
+            <audio id="bgMusic" loop preload="metadata">
+                <source src="1.mp3" type="audio/mpeg">
+                您的浏览器不支持音频播放。
+            </audio>
+            <img class="poster-img" id="posterImg" src="2.png" alt="封面" onerror="this.classList.add('hidden'); document.getElementById('posterFallback').classList.add('show');">
+            <div class="poster-fallback" id="posterFallback">🐜</div>
+        </div>
+
+        <!-- 控制栏（只有一个切换按钮） -->
+        <div class="controls">
+            <div class="btn-group">
+                <button class="ctrl-btn primary" id="toggleBtn">
+                    <span class="icon">▶</span>
+                    <span id="toggleLabel">开启</span>
+                </button>
+            </div>
+            <span class="info" id="timeDisplay">--:-- / --:--</span>
+        </div>
     </div>
-     <div class="detail-info">
-        <h3>📖 玩法介绍</h3>
-        <div class="detail-description" id="detailDescription"></div>  
+
+    <!-- 作者按钮（右下角） -->
+    <div class="author-wrapper">
+        <button class="author-btn" id="authorBtn">
+            <img src="1.png" alt="作者头像" id="authorImg">
+            <span class="author-text">作者</span>
+            <span class="fallback-text">🐜</span>
+        </button>
     </div>
-    <div class="screenshots-container">
-        <div class="screenshots-scroll" id="screenshotsScroll"></div>
+
+    <!-- 作者详情弹窗 -->
+    <div class="modal-overlay" id="authorModal">
+        <div class="modal-box">
+            <img src="1.png" alt="作者头像" class="avatar" id="modalAvatar">
+            <h2>Ants</h2>
+            <div class="sub">感谢游玩!</div>
+            <div class="desc">
+                我是养蚁人Ants，<br>祝大家养蚁爆产。
+            </div>
+            <button class="close-btn" id="closeModalBtn">关 闭</button>
+        </div>
     </div>
-     <div class="detail-download-wrapper">
-        <button class="detail-download-btn" id="detailDownloadBtn">下载应用</button>
-    </div>
-</div>
 
-<div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
-    <button class="image-viewer-close" onclick="closeImageViewer()">✕</button>
-    <img id="viewerImage" src="" alt="截图放大">
-</div>
+    <script>
+        (function() {
+            'use strict';
 
-<div class="toast" id="toast"></div>
+            // -------- DOM --------
+            const overlay = document.getElementById('loadingOverlay');
+            const progressFill = document.getElementById('progressFill');
+            const progressText = document.getElementById('progressText');
+            const loadingStatus = document.getElementById('loadingStatus');
+            const app = document.getElementById('app');
 
-<div class="footer">© 2025 桌宠商店 · 用爱发电</div>
+            const video = document.getElementById('petVideo');
+            const bgMusic = document.getElementById('bgMusic');
+            const posterImg = document.getElementById('posterImg');
+            const posterFallback = document.getElementById('posterFallback');
+            const toggleBtn = document.getElementById('toggleBtn');
+            const toggleLabel = document.getElementById('toggleLabel');
+            const toggleIcon = toggleBtn.querySelector('.icon');
+            const timeDisplay = document.getElementById('timeDisplay');
 
-<script>
-    (function() {
-        'use strict';
+            const permBtn = document.getElementById('permBtn');
+            const permDropdown = document.getElementById('permDropdown');
+            const permArrow = document.getElementById('permArrow');
 
-        const searchInput = document.getElementById('searchInput');
-        const appGrid = document.getElementById('appGrid');
-        const emptyState = document.getElementById('emptyState');
-        const detailFullscreen = document.getElementById('detailFullscreen');
-        const detailIcon = document.getElementById('detailIcon');
-        const detailName = document.getElementById('detailName');
-        const detailVersion = document.getElementById('detailVersion');
-        const screenshotsScroll = document.getElementById('screenshotsScroll');
-        const detailDescription = document.getElementById('detailDescription');
-        const detailDownloadBtn = document.getElementById('detailDownloadBtn');
-        const imageViewer = document.getElementById('imageViewer');
-        const viewerImage = document.getElementById('viewerImage');
-        const toast = document.getElementById('toast');
+            // 关闭按钮
+            const closePetBtn = document.getElementById('closePetBtn');
+            // ===== 新增：退出网页按钮 =====
+            const exitPageBtn = document.getElementById('exitPageBtn');
 
-        let currentDownloadUrl = '蚁后.apk';
-        let toastTimer = null;
+            const authorBtn = document.getElementById('authorBtn');
+            const authorModal = document.getElementById('authorModal');
+            const closeModalBtn = document.getElementById('closeModalBtn');
+            const modalAvatar = document.getElementById('modalAvatar');
+            const authorImg = document.getElementById('authorImg');
 
-        function showToast(msg) {
-            toast.textContent = msg;
-            toast.classList.add('show');
-            clearTimeout(toastTimer);
-            toastTimer = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 2200);
-        }
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
 
-        window.downloadApp = function(url) {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = '';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            showToast('📥 开始下载，请查看浏览器下载列表');
-        };
+            let toastTimer = null;
 
-        window.openDetail = function(card) {
-            const icon = card.dataset.icon;
-            const name = card.dataset.name;
-            const version = card.dataset.version || '1.0';
-            const description = card.dataset.description || '暂无详细介绍';
-            const screenshots = JSON.parse(card.dataset.screenshots || '[]');
-            const downloadUrl = card.dataset.download || '蚁后.apk';
+            bgMusic.volume = 0.6;
 
-            if (icon && icon.length > 0) {
-                detailIcon.src = icon;
-            } else {
-                detailIcon.src = 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Crect fill=%22%231976d2%22 width=%22100%22 height=%22100%22/%3E%3Ctext y=%22.9em%22 font-size=%2270%22%3E🛍️%3C/text%3E%3C/svg%3E';
+            // -------- Toast --------
+            function showToast(msg, emoji = '✨') {
+                toastMsg.textContent = msg;
+                toast.querySelector('.emoji').textContent = emoji;
+                toast.classList.add('show');
+                clearTimeout(toastTimer);
+                toastTimer = setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2800);
             }
-            detailName.textContent = name;
-            detailVersion.textContent = '版本 ' + version;
-            detailDescription.textContent = description;
-            currentDownloadUrl = downloadUrl;
 
-            screenshotsScroll.innerHTML = '';
-            if (screenshots.length > 0) {
-                screenshots.forEach(src => {
-                    const img = document.createElement('img');
-                    img.src = src;
-                    img.alt = name + ' 截图';
-                    img.loading = 'lazy';
-                    img.addEventListener('click', function(e) {
-                        e.stopPropagation();
-                        openImageViewer(src);
+            // ===== 新增：退出网页按钮逻辑 =====
+            exitPageBtn.addEventListener('click', () => {
+                // 尝试关闭当前页面
+                if (window.close) {
+                    try {
+                        window.close();
+                    } catch (e) {
+                        // 如果 window.close() 不可用，则返回上一页
+                        if (window.history.length > 1) {
+                            window.history.back();
+                        } else {
+                            showToast('当前页面无法关闭，请手动退出', '⚠️');
+                        }
+                    }
+                } else if (window.history.length > 1) {
+                    window.history.back();
+                } else {
+                    showToast('当前页面无法关闭，请手动退出', '⚠️');
+                }
+            });
+
+            // -------- 关闭桌宠逻辑（调用原生接口或提示） --------
+            closePetBtn.addEventListener('click', () => {
+                if (window.Android && typeof window.Android.closePet === 'function') {
+                    try {
+                        window.Android.closePet();
+                        showToast('正在关闭桌宠…', '🐜');
+                    } catch (e) {
+                        showToast('关闭失败，请检查权限或通知栏', '⚠️');
+                    }
+                } else {
+                    showToast('请使用桌宠应用或授予权限后关闭', '🐜');
+                }
+            });
+
+            // -------- 资源加载管理 --------
+            const resources = {
+                video: false,
+                poster: false,
+                avatar: false,
+                music: false,
+            };
+            const totalResources = Object.keys(resources).length;
+            let loadedCount = 0;
+            let isComplete = false;
+
+            function updateProgress() {
+                const pct = Math.min(100, Math.round((loadedCount / totalResources) * 100));
+                progressFill.style.width = pct + '%';
+                progressText.textContent = pct + '%';
+
+                if (pct < 30) loadingStatus.textContent = '正在加载资源…';
+                else if (pct < 60) loadingStatus.textContent = '即将就绪…';
+                else if (pct < 100) loadingStatus.textContent = '马上就好…';
+                else loadingStatus.textContent = '加载完成 ✨';
+
+                if (loadedCount === totalResources && !isComplete) {
+                    isComplete = true;
+                    loadingStatus.textContent = '加载完成 ✨';
+                    setTimeout(() => {
+                        overlay.classList.add('hidden');
+                        app.classList.add('show');
+                        setTimeout(() => {
+                            if (video.paused) {
+                                showToast('点击「开启」按钮播放', '🐜');
+                            }
+                        }, 600);
+                    }, 400);
+                }
+            }
+
+            function markResourceLoaded(name) {
+                if (resources[name] === true) return;
+                resources[name] = true;
+                loadedCount++;
+                updateProgress();
+            }
+
+            function checkVideo() {
+                if (video.readyState >= 2) {
+                    markResourceLoaded('video');
+                } else {
+                    video.addEventListener('loadeddata', function onLoad() {
+                        markResourceLoaded('video');
+                        video.removeEventListener('loadeddata', onLoad);
                     });
-                    img.onerror = function() {
-                        this.style.display = 'none';
-                    };
-                    screenshotsScroll.appendChild(img);
-                });
-            } else {
-                const placeholder = document.createElement('div');
-                placeholder.style.cssText = 'width:100%;text-align:center;color:#90a4ae;padding:20px;';
-                placeholder.textContent = '暂无截图展示';
-                screenshotsScroll.appendChild(placeholder);
+                    video.addEventListener('error', function onErr() {
+                        console.warn('视频加载失败，继续加载');
+                        markResourceLoaded('video');
+                        video.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.video) {
+                            console.warn('视频加载超时，强制继续');
+                            markResourceLoaded('video');
+                        }
+                    }, 5000);
+                }
             }
 
-            detailDownloadBtn.onclick = function() {
-                downloadApp(currentDownloadUrl);
+            function checkMusic() {
+                if (bgMusic.readyState >= 2) {
+                    markResourceLoaded('music');
+                } else {
+                    bgMusic.addEventListener('loadeddata', function onLoad() {
+                        markResourceLoaded('music');
+                        bgMusic.removeEventListener('loadeddata', onLoad);
+                    });
+                    bgMusic.addEventListener('error', function onErr() {
+                        console.warn('音乐加载失败，继续加载');
+                        markResourceLoaded('music');
+                        bgMusic.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.music) {
+                            console.warn('音乐加载超时，强制继续');
+                            markResourceLoaded('music');
+                        }
+                    }, 5000);
+                }
+            }
+
+            function checkPoster() {
+                if (posterImg.complete && posterImg.naturalWidth > 0) {
+                    markResourceLoaded('poster');
+                } else {
+                    posterImg.addEventListener('load', function onLoad() {
+                        markResourceLoaded('poster');
+                        posterImg.removeEventListener('load', onLoad);
+                    });
+                    posterImg.addEventListener('error', function onErr() {
+                        console.warn('封面图加载失败，使用备用');
+                        posterFallback.classList.add('show');
+                        markResourceLoaded('poster');
+                        posterImg.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.poster) {
+                 console.warn('封面图加载超时，强制继续');
+                            posterFallback.classList.add('show');
+                            markResourceLoaded('poster');
+                        }
+                    }, 4000);
+                }
+            }
+
+            function checkAvatar() {
+                if (authorImg.complete && authorImg.naturalWidth > 0) {
+                    markResourceLoaded('avatar');
+                } else {
+                    authorImg.addEventListener('load', function onLoad() {
+                        markResourceLoaded('avatar');
+                        authorImg.removeEventListener('load', onLoad);
+                    });
+                    authorImg.addEventListener('error', function onErr() {
+                        console.warn('头像加载失败，使用备用');
+                        authorImg.classList.add('error');
+                        markResourceLoaded('avatar');
+                        authorImg.removeEventListener('error', onErr);
+                    });
+                    setTimeout(() => {
+                        if (!resources.avatar) {
+                            console.warn('头像加载超时，强制继续');
+                            authorImg.classList.add('error');
+                            markResourceLoaded('avatar');
+                        }
+                    }, 4000);
+                }
+            }
+
+            checkVideo();
+            checkMusic();
+            checkPoster();
+            checkAvatar();
+            updateProgress();
+
+            // -------- 封面控制 --------
+            function updatePoster() {
+                if (video.paused || video.ended || video.readyState < 2) {
+                    posterImg.classList.remove('hidden');
+                } else {
+                    posterImg.classList.add('hidden');
+                }
+                if (video.error) {
+                    posterImg.classList.remove('hidden');
+                }
+            }
+
+            posterImg.addEventListener('click', () => {
+                if (video.paused) {
+                    togglePlay();
+                }
+            });
+
+            // -------- 切换播放/暂停（视频 + 音乐同步） --------
+            function togglePlay() {
+                if (video.paused) {
+                    video.play().then(() => {
+                        bgMusic.play().catch(() => {});
+                        updateUI();
+                    }).catch((e) => {
+                        if (e.name === 'NotAllowedError') {
+                            showToast('请点击页面后手动开启播放', '👆');
+                        } else {
+                            showToast('播放失败: ' + e.message, '⚠️');
+                        }
+                        updateUI();
+                    });
+                } else {
+                    video.pause();
+                    bgMusic.pause();
+                    updateUI();
+                }
+            }
+
+            function updateUI() {
+                const paused = video.paused;
+                if (paused) {
+                    toggleLabel.textContent = '开启';
+                    toggleIcon.textContent = '▶';
+                    toggleBtn.classList.add('primary');
+                } else {
+                    toggleLabel.textContent = '关闭';
+                    toggleIcon.textContent = '❙❙';
+                    toggleBtn.classList.remove('primary');
+                }
+                updatePoster();
+            }
+
+            toggleBtn.addEventListener('click', togglePlay);
+
+            video.addEventListener('loadeddata', () => {
+                updateTimeDisplay();
+                updateUI();
+            });
+            video.addEventListener('play', updateUI);
+            video.addEventListener('pause', updateUI);
+            video.addEventListener('ended', updateUI);
+            video.addEventListener('timeupdate', updateTimeDisplay);
+
+            video.addEventListener('error', (e) => {
+                console.warn('视频加载错误:', e);
+                showToast('视频加载失败，请检查 1.mp4', '❌');
+                updateUI();
+            });
+
+            video.addEventListener('click', () => {
+                togglePlay();
+            });
+
+            function formatTime(seconds) {
+                if (!seconds || isNaN(seconds)) return '--:--';
+                const m = Math.floor(seconds / 60);
+                const s = Math.floor(seconds % 60);
+                return String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+            }
+
+            function updateTimeDisplay() {
+                const current = formatTime(video.currentTime);
+                const total = formatTime(video.duration);
+                timeDisplay.textContent = current + ' / ' + total;
+            }
+
+            // -------- 权限下拉 --------
+            permBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const isOpen = permDropdown.classList.contains('open');
+                if (isOpen) {
+                    permDropdown.classList.remove('open');
+                    permArrow.classList.remove('open');
+                } else {
+                    permDropdown.classList.add('open');
+                    permArrow.classList.add('open');
+                }
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!permBtn.contains(e.target) && !permDropdown.contains(e.target)) {
+                    permDropdown.classList.remove('open');
+                    permArrow.classList.remove('open');
+                }
+            });
+
+            document.querySelectorAll('.permission-dropdown .item').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const perm = item.dataset.perm;
+                    if (perm === 'overlay') {
+                        showToast('请前往系统设置开启「悬浮窗权限」', '🪟');
+                    } else if (perm === 'notification') {
+                        showToast('请前往系统设置开启「通知权限」', '🔔');
+                    }
+                    permDropdown.classList.remove('open');
+                    permArrow.classList.remove('open');
+                });
+            });
+
+            // -------- 作者按钮 & 模态框 --------
+            authorBtn.addEventListener('click', () => {
+                authorModal.classList.add('open');
+            });
+
+            function closeModal() {
+                authorModal.classList.remove('open');
+            }
+
+            closeModalBtn.addEventListener('click', closeModal);
+            authorModal.addEventListener('click', (e) => {
+                if (e.target === authorModal) closeModal();
+            });
+
+            authorImg.addEventListener('error', () => {
+                authorImg.classList.add('error');
+                modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
+            });
+            modalAvatar.addEventListener('error', () => {
+                modalAvatar.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"%3E%3Ctext y=".9em" font-size="90"%3E🐜%3C/text%3E%3C/svg%3E';
+            });
+
+            posterImg.onerror = function() {
+                this.classList.add('hidden');
+                posterFallback.classList.add('show');
+                if (!resources.poster) {
+                    markResourceLoaded('poster');
+                }
             };
 
-            detailFullscreen.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        };
-
-        window.closeDetail = function() {
-            detailFullscreen.classList.remove('open');
-            document.body.style.overflow = '';
-        };
-
-        function openImageViewer(src) {
-            viewerImage.src = src;
-            imageViewer.classList.add('open');
-            document.body.style.overflow = 'hidden';
-        }
-
-        window.closeImageViewer = function() {
-            imageViewer.classList.remove('open');
-            document.body.style.overflow = '';
-        };
-
-        imageViewer.addEventListener('click', function(e) {
-            if (e.target === imageViewer) {
-                closeImageViewer();
-            }
-        });
-
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                if (imageViewer.classList.contains('open')) {
-                    closeImageViewer();
-                } else if (detailFullscreen.classList.contains('open')) {
-                    closeDetail();
+            // -------- 键盘快捷键 --------
+            document.addEventListener('keydown', (e) => {
+                if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+                if (e.key === ' ' || e.key === 'Space') {
+                    e.preventDefault();
+                    togglePlay();
                 }
-            }
-        });
-
-        searchInput.addEventListener('input', function() {
-            const query = this.value.trim().toLowerCase();
-            const cards = appGrid.querySelectorAll('.app-card');
-            let visible = 0;
-            cards.forEach(card => {
-                const name = (card.dataset.name || '').toLowerCase();
-                if (query === '' || name.includes(query)) {
-                    card.style.display = '';
-                    visible++;
-                } else {
-                    card.style.display = 'none';
+                if (e.key === 'Escape') {
+                    if (authorModal.classList.contains('open')) closeModal();
                 }
             });
-            emptyState.classList.toggle('show', visible === 0);
-        });
 
-        document.querySelectorAll('.app-icon').forEach(img => {
-            img.addEventListener('error', function() {
-                this.style.display = 'none';
-                const fallback = this.nextElementSibling;
-                if (fallback && fallback.classList.contains('app-icon-fallback')) {
-                    fallback.style.display = 'flex';
-                }
-            });
-        });
+            // -------- 初始化 --------
+            updateUI();
+            updateTimeDisplay();
+            posterImg.classList.remove('hidden');
 
-        console.log('🛍️ 桌宠商店已准备就绪');
-    })();
-</script>
+            if (video.readyState >= 1) {
+                updateUI();
+            }
+
+            console.log('🐜 蚁后桌宠 加载进度版已启动 (单按钮切换 + 背景音乐 + 退出网页 + 关闭按钮)');
+        })();
+    </script>
+
 </body>
 </html>
