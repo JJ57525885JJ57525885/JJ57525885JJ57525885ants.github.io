@@ -20,7 +20,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* ========== 顶部导航栏 ========== */
         .navbar {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(16px);
@@ -100,7 +99,6 @@
             flex-shrink: 0;
         }
 
-        /* ========== 主内容区域 ========== */
         .main-container {
             max-width: 1300px;
             margin: 0 auto;
@@ -126,7 +124,6 @@
             display: inline-block;
         }
 
-        /* ========== 应用卡片网格 ========== */
         .app-grid {
             display: grid;
             grid-template-columns: repeat(5, 1fr);
@@ -168,7 +165,6 @@
             }
         }
 
-        /* ========== 单个应用卡片 ========== */
         .app-card {
             background: #ffffff;
             border-radius: 20px;
@@ -272,7 +268,6 @@
             box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
         }
 
-        /* ========== 全屏详情弹窗 ========== */
         .detail-fullscreen {
             position: fixed;
             inset: 0;
@@ -351,7 +346,6 @@
             font-weight: 500;
         }
 
-        /* 截图滑动区域 */
         .screenshots-container {
             padding: 20px 20px 10px;
             flex-shrink: 0;
@@ -383,7 +377,6 @@
             transform: scale(1.02);
         }
 
-        /* 应用信息区域 */
         .detail-info {
             padding: 16px 20px 24px;
             flex: 1;
@@ -440,7 +433,6 @@
             transform: scale(0.96);
         }
 
-        /* ========== 图片放大查看器 ========== */
         .image-viewer {
             position: fixed;
             inset: 0;
@@ -492,7 +484,6 @@
             background: rgba(255, 255, 255, 0.35);
         }
 
-        /* ========== 空状态 ========== */
         .empty-state {
             display: none;
             text-align: center;
@@ -506,7 +497,6 @@
             display: block;
         }
 
-        /* ========== Toast ========== */
         .toast {
             position: fixed;
             bottom: 40px;
@@ -541,7 +531,6 @@
             margin-top: 12px;
         }
 
-        /* 响应式细节 */
         @media (max-width: 500px) {
             .screenshots-scroll img {
                 width: 160px;
@@ -552,7 +541,6 @@
 </head>
 <body>
 
-    <!-- 导航栏 -->
     <nav class="navbar">
         <div class="logo">
             <div class="logo-icon">🛍️</div>
@@ -564,7 +552,6 @@
         </div>
     </nav>
 
-    <!-- 主内容区 -->
     <div class="main-container">
         <div class="section-title">
             <span class="dot"></span> 全部应用
@@ -584,7 +571,7 @@
             <button class="download-btn" onclick="event.stopPropagation(); downloadApp('蚁后.apk')">下载</button>
         </div>
 
-            <!-- 桌宠商店卡片 (新增) -->
+            <!-- 桌宠商店卡片 -->
             <div class="app-card" data-name="桌宠商店" data-size="<5MB" data-icon="2.png"
             data-download="2.apk"
             data-description="🏪 桌宠商店本身。下载安装后，即可拥有一个轻量级的应用商店，随时浏览和下载最新的桌宠应用。可以下载很多的桌宠。"
@@ -597,12 +584,25 @@
             <button class="download-btn" onclick="event.stopPropagation(); downloadApp('2.apk')">下载</button>
         </div>
 
+        <!-- 独角仙桌宠卡片 (新增) -->
+        <div class="app-card" data-name="独角仙" data-size="~6MB" data-icon="3.png"
+        data-download="3.apk"
+        data-version="1.0"
+        data-description="🪲 独角仙桌宠来啦！一只威武的独角仙在你的屏幕上爬来爬去。点击它会播放音效，拖动它可以随意移动。通知栏里可以关闭桌宠，也可以到应用内网页控制。让这只帅气的甲虫陪你度过每一天！"
+        onclick="openDetail(this)">
+        <img class="app-icon" src="3.png" alt="独角仙图标"
+        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <div class="app-icon-fallback" style="width:84px;height:84px;border-radius:22px;background:linear-gradient(135deg, #4CAF50, #8BC34A);display:none;align-items:center;justify-content:center;font-size:32px;color:#fff;margin-bottom:14px;">🪲</div>
+        <div class="app-name">独角仙</div>
+        <div class="app-size">~6 MB</div>
+        <button class="download-btn" onclick="event.stopPropagation(); downloadApp('3.apk')">下载</button>
+    </div>
+
         <!-- 空状态 -->
         <div class="empty-state" id="emptyState">😕 没有找到匹配的应用</div>
     </div>
 </div>
 
-<!-- 全屏详情弹窗 -->
 <div class="detail-fullscreen" id="detailFullscreen">
     <div class="detail-header">
         <div class="detail-icon-name">
@@ -621,19 +621,16 @@
     <div class="screenshots-container">
         <div class="screenshots-scroll" id="screenshotsScroll"></div>
     </div>
-     <!-- 下载按钮独立放底部 -->
-    <div class="detail-download-wrapper">
+     <div class="detail-download-wrapper">
         <button class="detail-download-btn" id="detailDownloadBtn">下载应用</button>
     </div>
 </div>
 
-<!-- 图片放大查看器 -->
 <div class="image-viewer" id="imageViewer" onclick="closeImageViewer()">
     <button class="image-viewer-close" onclick="closeImageViewer()">✕</button>
     <img id="viewerImage" src="" alt="截图放大">
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
 
 <div class="footer">© 2025 桌宠商店 · 用爱发电</div>
@@ -686,7 +683,6 @@
             const screenshots = JSON.parse(card.dataset.screenshots || '[]');
             const downloadUrl = card.dataset.download || '蚁后.apk';
 
-            // 处理图标：如果卡片没有图标（如桌宠商店），显示一个默认图标
             if (icon && icon.length > 0) {
                 detailIcon.src = icon;
             } else {
@@ -697,7 +693,6 @@
             detailDescription.textContent = description;
             currentDownloadUrl = downloadUrl;
 
-            // 生成截图滑动区域
             screenshotsScroll.innerHTML = '';
             if (screenshots.length > 0) {
                 screenshots.forEach(src => {
@@ -715,7 +710,6 @@
                     screenshotsScroll.appendChild(img);
                 });
             } else {
-                // 如果没有截图，显示占位提示
                 const placeholder = document.createElement('div');
                 placeholder.style.cssText = 'width:100%;text-align:center;color:#90a4ae;padding:20px;';
                 placeholder.textContent = '暂无截图展示';
@@ -746,14 +740,12 @@
             document.body.style.overflow = '';
         };
 
-        // 点击遮罩关闭放大 (已在HTML onclick)
         imageViewer.addEventListener('click', function(e) {
             if (e.target === imageViewer) {
                 closeImageViewer();
             }
         });
 
-        // ESC 关闭
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') {
                 if (imageViewer.classList.contains('open')) {
@@ -764,7 +756,6 @@
             }
         });
 
-        // 搜索功能
         searchInput.addEventListener('input', function() {
             const query = this.value.trim().toLowerCase();
             const cards = appGrid.querySelectorAll('.app-card');
@@ -781,10 +772,8 @@
             emptyState.classList.toggle('show', visible === 0);
         });
 
-        // 图标回退
         document.querySelectorAll('.app-icon').forEach(img => {
             img.addEventListener('error', function() {
-                // 如果图片加载失败，隐藏自身，显示后面的备用元素
                 this.style.display = 'none';
                 const fallback = this.nextElementSibling;
                 if (fallback && fallback.classList.contains('app-icon-fallback')) {
