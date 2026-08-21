@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -60,6 +60,13 @@
             box-shadow: 0 4px 12px rgba(25, 118, 210, 0.25);
         }
 
+        .navbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
         .search-box {
             display: flex;
             align-items: center;
@@ -71,7 +78,7 @@
             transition: all 0.25s ease;
             flex: 1;
             max-width: 360px;
-            min-width: 200px;
+            min-width: 180px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
         }
 
@@ -99,6 +106,56 @@
             flex-shrink: 0;
         }
 
+        /* ---- 警告按钮 ---- */
+        .warning-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: linear-gradient(135deg, #ff8f00, #ff6f00);
+            color: #fff;
+            font-size: 20px;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(255, 111, 0, 0.35);
+            transition: transform 0.2s ease, box-shadow 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .warning-btn::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            border: 2px solid rgba(255, 111, 0, 0.25);
+            animation: warningPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes warningPulse {
+            0%,
+            100% {
+                transform: scale(1);
+                opacity: 0.6;
+            }
+            50% {
+                transform: scale(1.12);
+                opacity: 0;
+            }
+        }
+
+        .warning-btn:hover {
+            transform: scale(1.06);
+            box-shadow: 0 6px 20px rgba(255, 111, 0, 0.45);
+        }
+
+        .warning-btn:active {
+            transform: scale(0.92);
+        }
+
+        /* ---- 主容器 ---- */
         .main-container {
             max-width: 1300px;
             margin: 0 auto;
@@ -152,9 +209,23 @@
             }
             .navbar {
                 padding: 12px 16px;
+                gap: 12px;
             }
             .logo {
                 font-size: 20px;
+            }
+            .search-box {
+                max-width: 200px;
+                min-width: 120px;
+                padding: 6px 14px;
+            }
+            .search-box input {
+                font-size: 14px;
+            }
+            .warning-btn {
+                width: 36px;
+                height: 36px;
+                font-size: 17px;
             }
         }
 
@@ -163,8 +234,22 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 10px;
             }
+            .search-box {
+                max-width: 140px;
+                min-width: 90px;
+                padding: 5px 10px;
+            }
+            .search-box input {
+                font-size: 13px;
+            }
+            .warning-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 15px;
+            }
         }
 
+        /* ---- 应用卡片 ---- */
         .app-card {
             background: #ffffff;
             border-radius: 20px;
@@ -294,6 +379,7 @@
             box-shadow: 0 2px 8px rgba(25, 118, 210, 0.2);
         }
 
+        /* ---- 详情浮层 ---- */
         .detail-fullscreen {
             position: fixed;
             inset: 0;
@@ -485,6 +571,7 @@
             transform: scale(0.96);
         }
 
+        /* ---- 图片查看器 ---- */
         .image-viewer {
             position: fixed;
             inset: 0;
@@ -536,6 +623,7 @@
             background: rgba(255, 255, 255, 0.35);
         }
 
+        /* ---- 空状态 ---- */
         .empty-state {
             display: none;
             text-align: center;
@@ -549,6 +637,7 @@
             display: block;
         }
 
+        /* ---- Toast ---- */
         .toast {
             position: fixed;
             bottom: 40px;
@@ -574,6 +663,136 @@
             transform: translateX(-50%) translateY(0);
         }
 
+        /* ---- 警告弹窗 ---- */
+        .warning-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.45);
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            padding: 24px;
+        }
+
+        .warning-modal.open {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .warning-modal-card {
+            background: #ffffff;
+            border-radius: 28px;
+            max-width: 440px;
+            width: 100%;
+            padding: 32px 28px 28px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+            transform: scale(0.92) translateY(20px);
+            transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .warning-modal.open .warning-modal-card {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .warning-modal-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .warning-modal-header .icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .warning-modal-header h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0d47a1;
+            margin: 0;
+        }
+
+        .warning-modal-body {
+            color: #2d2d3f;
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        .warning-modal-body .item {
+            display: flex;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f5;
+        }
+
+        .warning-modal-body .item:last-child {
+            border-bottom: none;
+            padding-bottom: 4px;
+        }
+
+        .warning-modal-body .item .num {
+            flex-shrink: 0;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: #e3f2fd;
+            color: #1976d2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            margin-top: 2px;
+        }
+
+        .warning-modal-body .item .text {
+            flex: 1;
+        }
+
+        .warning-modal-body .item .text strong {
+            color: #0d47a1;
+        }
+
+        .warning-modal-footer {
+            margin-top: 22px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .warning-modal-footer .btn-know {
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            padding: 10px 32px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(25, 118, 210, 0.25);
+            letter-spacing: 0.3px;
+        }
+
+        .warning-modal-footer .btn-know:hover {
+            background: linear-gradient(135deg, #1565c0, #1e88e5);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(25, 118, 210, 0.35);
+        }
+
+        .warning-modal-footer .btn-know:active {
+            transform: scale(0.94);
+        }
+
+        /* ---- Footer ---- */
         .footer {
             text-align: center;
             padding: 20px 24px 36px;
@@ -588,6 +807,29 @@
                 width: 160px;
                 height: 240px;
             }
+            .warning-modal-card {
+                padding: 24px 20px 22px;
+            }
+            .warning-modal-body {
+                font-size: 14px;
+            }
+            .warning-modal-header h2 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .warning-modal-card {
+                padding: 18px 16px 18px;
+            }
+            .warning-modal-body .item {
+                padding: 10px 0;
+            }
+            .warning-modal-body .item .num {
+                width: 22px;
+                height: 22px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
@@ -598,9 +840,12 @@
             <div class="logo-icon">🛍️</div>
             桌宠商店
         </div>
-        <div class="search-box">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="searchInput" placeholder="搜索桌宠应用…">
+        <div class="navbar-right">
+            <div class="search-box">
+                <span class="search-icon">🔍</span>
+                <input type="text" id="searchInput" placeholder="搜索桌宠应用…">
+            </div>
+            <button class="warning-btn" id="warningBtn" aria-label="温馨提示">⚠︎️</button>
         </div>
     </nav>
 
@@ -608,7 +853,6 @@
         <div class="section-title">
             <span class="dot"></span> 全部应用
         </div>
-
         <div class="app-grid" id="appGrid">
             <!-- 应用数据通过 JavaScript 动态生成 -->
         </div>
@@ -647,9 +891,32 @@
         <img id="viewerImage" src="" alt="截图放大">
     </div>
 
+    <!-- 警告弹窗 -->
+    <div class="warning-modal" id="warningModal">
+        <div class="warning-modal-card">
+            <div class="warning-modal-header">
+                <span class="icon">⚠︎️</span>
+                <h2>温馨提示</h2>
+            </div>
+            <div class="warning-modal-body">
+                <div class="item">
+                    <span class="num">1</span>
+                    <span class="text"><strong>所有应用的主界面都是一样的</strong>，只是召唤的桌宠不同。下载任意一个即可体验完整的桌宠功能。</span>
+                </div>
+                <div class="item">
+                    <span class="num">2</span>
+                    <span class="text"><strong>请给予悬浮窗权限</strong>，才能正常在屏幕上召唤桌宠。首次打开应用时会自动提示授权。</span>
+                </div>
+            </div>
+            <div class="warning-modal-footer">
+                <button class="btn-know" onclick="closeWarning()">我知道了</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast" id="toast"></div>
 
-    <div class="footer">© 2025 桌宠商店 · 作者:Ants                        ⚠︎注:每一个的桌宠主界面都一样只是召唤的不一样</div>
+    <div class="footer">© 2025 桌宠商店 · 作者: Ants &nbsp;|&nbsp; ⚠︎️ 注: 此页面由AI生成。</div>
 
     <script>
         (function() {
@@ -657,105 +924,118 @@
 
             // ---------- 应用数据 ----------
             const APPS = [{
-    id: 'ant',
-    name: '蚁后桌宠',
-    icon: '1.png',
-    size: '大约6MB',
-    version: '1.1',
-    download: '蚁后.apk',
-    description: '🐜 欢迎来到桌宠商店！这个应用可以在你的屏幕上召唤一只蚁后桌宠，它会一直在屏幕上陪你。你可以拖动它，点击它会有点击音效,通知栏里可以关闭桌宠,让养蚁的乐趣随时相伴!',
-    screenshots: ['1.jpg', '2.jpg', '3.jpg'],
-    fallbackEmoji: '🐜',
-    fallbackBg: 'linear-gradient(135deg, #1976d2, #42a5f5)'
-}, {
-    id: 'store',
-    name: '桌宠商店',
-    icon: '2.png',
-    size: '大约10MB',
-    version: '1.0',
-    download: '商店.apk',
-    description: '🏪 桌宠商店本身。下载安装后，即可拥有一个轻量级的应用商店，随时浏览和下载最新的桌宠应用。可以下载很多的桌宠。',
-    screenshots: [],
-    fallbackEmoji: '🛍️',
-    fallbackBg: 'linear-gradient(135deg, #1976d2, #42a5f5)'
-}, {
-    id: 'beetle',
-    name: '独角仙',
-    icon: '3.png',
-    size: '大约5MB',
-    version: '1.1',
-    download: '独角仙.apk',
-    description: '🪲 独角仙桌宠来啦！一只威武的独角仙在你的屏幕上爬来爬去。点击它会播放音效，拖动它可以随意移动。通知栏里可以关闭桌宠，也可以到应用内网页控制。让这只帅气的甲虫陪你度过每一天！',
-    screenshots: [],
-    fallbackEmoji: '🪲',
-    fallbackBg: 'linear-gradient(135deg, #4CAF50, #8BC34A)'
-}, {
-    id: 'jidu',
-    name: '姬兜',
-    icon: '姬兜.png',
-    size: '大约6MB',
-    version: '1.0',
-    download: '姬兜.apk',
-    description: '🐞 姬兜甲虫在你的屏幕上悠闲漫步，点击会有清脆的音效，拖动可自由移动。通知栏一键关闭，让这只温顺的甲虫陪你享受宁静时光！',
-    screenshots: [],
-    fallbackEmoji: '🐞',
-    fallbackBg: 'linear-gradient(135deg, #5D4037, #8D6E63)'
-}, {
-    id: 'scorpion',
-    name: '蝎子',
-    icon: '蝎子.png',
-    size: '大约5MB',
-    version: '1.0',
-    download: '蝎子.apk',
-    description: '🦂 一只酷劲十足的蝎子在你的屏幕上横行，尾部高高翘起。点击它会有威慑音效，拖动随意放置，通知栏可关闭，让这份狂野陪你左右！',
-    screenshots: [],
-    fallbackEmoji: '🦂',
-    fallbackBg: 'linear-gradient(135deg, #4E342E, #795548)'
-}, {
-    id: 'stagbeetle',
-    name: '锹甲',
-    icon: '锹甲.png',
-    size: '大约6MB',
-    version: '1.0',
-    download: '锹甲.apk',
-    description: '🪲 锹甲虫挥舞着巨大的上颚，威风凛凛地在屏幕上巡逻。点击播放雄壮音效，拖动自由移动，通知栏可随时关闭，让这位甲虫武士守护你的桌面！',
-    screenshots: [],
-    fallbackEmoji: '🪲',
-    fallbackBg: 'linear-gradient(135deg, #263238, #546E7A)'
-}, {
-    id: 'greenmantis',
-    name: '绿巨螳螂',
-    icon: '绿巨螳螂.png',
-    size: '大约5MB',
-    version: '1.0',
-    download: '绿巨螳螂.apk',
-    description: '🦗 一只翠绿的巨螳螂在屏幕上虎视眈眈，挥舞着镰刀般的前足。点击发出虫鸣，拖动随意移动，通知栏可关闭，让这位丛林猎手为你的桌面增添野趣！',
-    screenshots: [],
-    fallbackEmoji: '🦗',
-    fallbackBg: 'linear-gradient(135deg, #1B5E20, #388E3C)'
-}, {
-    id: 'ghostmantis',
-    name: '幽灵螳螂',
-    icon: '幽灵螳螂.png',
-    size: '大约6MB',
-    version: '1.0',
-    download: '幽灵螳螂.apk',
-    description: '🦗 幽灵螳螂如同枯叶般神秘，在屏幕上优雅地移动。点击它会发出低沉的共鸣音，拖动自由放置，通知栏可关闭，让这份诡谲之美常伴你左右！',
-    screenshots: [],
-    fallbackEmoji: '🦗',
-    fallbackBg: 'linear-gradient(135deg, #616161, #9E9E9E)'
-}, {
-    id: 'stickinsect',
-    name: '竹节虫',
-    icon: '竹节虫.png',
-    size: '大约7MB',
-    version: '1.0',
-    download: '竹节虫.apk',
-    description: '🐛 竹节虫模拟树枝，在屏幕上缓缓爬行，几乎与环境融为一体。点击会发出沙沙声，拖动随意移动，通知栏可关闭，让这位伪装大师陪你度过静谧时光！',
-    screenshots: [],
-    fallbackEmoji: '🐛',
-    fallbackBg: 'linear-gradient(135deg, #3E2723, #6D4C41)'
-}];
+                id: 'ant',
+                name: '蚁后桌宠',
+                icon: '1.png',
+                size: '大约6MB',
+                version: '1.1',
+                download: '蚁后.apk',
+                description: '🐜 欢迎来到桌宠商店！这个应用可以在你的屏幕上召唤一只蚁后桌宠，它会一直在屏幕上陪你。你可以拖动它，点击它会有点击音效，通知栏里可以关闭桌宠，让养蚁的乐趣随时相伴!',
+                screenshots: ['1.jpg', '2.jpg', '3.jpg'],
+                fallbackEmoji: '🐜',
+                fallbackBg: 'linear-gradient(135deg, #1976d2, #42a5f5)'
+            }, {
+                id: 'store',
+                name: '桌宠商店',
+                icon: '2.png',
+                size: '大约10MB',
+                version: '1.0',
+                download: '商店.apk',
+                description: '🏪 桌宠商店本身。下载安装后，即可拥有一个轻量级的应用商店，随时浏览和下载最新的桌宠应用。可以下载很多的桌宠。',
+                screenshots: [],
+                fallbackEmoji: '🛍️',
+                fallbackBg: 'linear-gradient(135deg, #1976d2, #42a5f5)'
+            }, {
+                id: 'beetle',
+                name: '独角仙',
+                icon: '3.png',
+                size: '大约5MB',
+                version: '1.1',
+                download: '独角仙.apk',
+                description: '🪲 独角仙桌宠来啦！一只威武的独角仙在你的屏幕上爬来爬去。点击它会播放音效，可随意拖动。通知栏里可以关闭桌宠，也可以到应用内网页控制。让这只帅气的甲虫陪你度过每一天！',
+                screenshots: [],
+                fallbackEmoji: '🪲',
+                fallbackBg: 'linear-gradient(135deg, #4CAF50, #8BC34A)'
+            }, {
+                id: 'jidu',
+                name: '姬兜',
+                icon: '姬兜.png',
+                size: '大约6MB',
+                version: '1.0',
+                download: '姬兜.apk',
+                description: '🐞 姬兜甲虫在你的屏幕上悠闲漫步，可自由拖动。通知栏一键关闭，让这只温顺的甲虫陪你享受宁静时光！',
+                screenshots: [],
+                fallbackEmoji: '🐞',
+                fallbackBg: 'linear-gradient(135deg, #5D4037, #8D6E63)'
+            }, {
+                id: 'scorpion',
+                name: '蝎子',
+                icon: '蝎子.png',
+                size: '大约5MB',
+                version: '1.0',
+                download: '蝎子.apk',
+                description: '🦂 一只酷劲十足的蝎子在你的屏幕上横行，尾部高高翘起，拖动随意放置，通知栏可关闭，让这份狂野陪你左右！',
+                screenshots: [],
+                fallbackEmoji: '🦂',
+                fallbackBg: 'linear-gradient(135deg, #4E342E, #795548)'
+            }, {
+                id: 'stagbeetle',
+                name: '锹甲',
+                icon: '锹甲.png',
+                size: '大约6MB',
+                version: '1.0',
+                download: '锹甲.apk',
+                description: '🪲 锹甲虫挥舞着巨大的上颚，威风凛凛地在屏幕上巡逻，拖动自由移动，通知栏可随时关闭，让这位甲虫武士守护你的桌面！',
+                screenshots: [],
+                fallbackEmoji: '🪲',
+                fallbackBg: 'linear-gradient(135deg, #263238, #546E7A)'
+            }, {
+                id: 'greenmantis',
+                name: '绿巨螳螂',
+                icon: '绿巨螳螂.png',
+                size: '大约5MB',
+                version: '1.0',
+                download: '绿巨螳螂.apk',
+                description: '🦗 一只翠绿的巨螳螂在屏幕上虎视眈眈，挥舞着镰刀般的前足。拖动随意移动，通知栏可关闭，让这位丛林猎手为你的桌面增添野趣！',
+                screenshots: [],
+                fallbackEmoji: '🦗',
+                fallbackBg: 'linear-gradient(135deg, #1B5E20, #388E3C)'
+            }, {
+                id: 'ghostmantis',
+                name: '幽灵螳螂',
+                icon: '幽灵螳螂.png',
+                size: '大约6MB',
+                version: '1.0',
+                download: '幽灵螳螂.apk',
+                description: '🦗 幽灵螳螂如同枯叶般神秘，在屏幕上优雅地移动，拖动自由放置，通知栏可关闭，让这份诡谲之美常伴你左右！',
+                screenshots: [],
+                fallbackEmoji: '🦗',
+                fallbackBg: 'linear-gradient(135deg, #616161, #9E9E9E)'
+            }, {
+                id: 'stickinsect',
+                name: '竹节虫',
+                icon: '竹节虫.png',
+                size: '大约7MB',
+                version: '1.0',
+                download: '竹节虫.apk',
+                description: '🐛 竹节虫模拟树枝，在屏幕上缓缓爬行，几乎与环境融为一体，拖动随意移动，通知栏可关闭，让这位伪装大师陪你度过静谧时光！',
+                screenshots: [],
+                fallbackEmoji: '🐛',
+                fallbackBg: 'linear-gradient(135deg, #3E2723, #6D4C41)'
+            }, {
+                // 新增：红火蚁
+                id: 'redfireant',
+                name: '红火蚁',
+                icon: '红火蚁.png',
+                size: '大约5MB',
+                version: '1.0',
+                download: '红火蚁.apk',
+                description: '🐜 凶猛的红火蚁来啦！这只充满攻击性的红火蚁会在你的屏幕上横行霸道，可随意拖动。通知栏里可以关闭桌宠',
+                screenshots: [],
+                fallbackEmoji: '🔥',
+                fallbackBg: 'linear-gradient(135deg, #D32F2F, #F44336)'
+            }];
+
             // ---------- DOM 引用 ----------
             const appGrid = document.getElementById('appGrid');
             const emptyState = document.createElement('div');
@@ -776,6 +1056,8 @@
             const imageViewer = document.getElementById('imageViewer');
             const viewerImage = document.getElementById('viewerImage');
             const toast = document.getElementById('toast');
+            const warningModal = document.getElementById('warningModal');
+            const warningBtn = document.getElementById('warningBtn');
 
             let currentDownloadUrl = '蚁后.apk';
             let toastTimer = null;
@@ -807,11 +1089,10 @@
                 const query = filter.toLowerCase().trim();
                 let visibleCount = 0;
 
-                // 清除旧卡片（保留空状态）
                 const cards = appGrid.querySelectorAll('.app-card');
                 cards.forEach(c => c.remove());
 
-                APPS.forEach((app, index) => {
+                APPS.forEach((app) => {
                     const nameLower = app.name.toLowerCase();
                     if (query && !nameLower.includes(query)) return;
 
@@ -828,7 +1109,6 @@
                     card.dataset.fallbackEmoji = app.fallbackEmoji || '📱';
                     card.dataset.fallbackBg = app.fallbackBg || 'linear-gradient(135deg, #1976d2, #42a5f5)';
 
-                    // ---- 图标 ----
                     const wrap = document.createElement('div');
                     wrap.className = 'app-icon-wrapper';
 
@@ -844,19 +1124,16 @@
                     fallback.textContent = app.fallbackEmoji || '📱';
                     fallback.style.background = app.fallbackBg || 'linear-gradient(135deg, #1976d2, #42a5f5)';
 
-                    // 图片加载失败时显示 fallback
                     img.addEventListener('error', function() {
                         this.style.display = 'none';
                         fallback.classList.add('show');
                     });
 
-                    // 如果图片加载成功，隐藏 fallback
                     img.addEventListener('load', function() {
                         fallback.classList.remove('show');
                         this.style.display = 'block';
                     });
 
-                    // 强制触发一次加载检测（防止缓存导致的错误状态）
                     const src = img.src;
                     img.src = '';
                     img.src = src;
@@ -865,19 +1142,16 @@
                     wrap.appendChild(fallback);
                     card.appendChild(wrap);
 
-                    // ---- 名称 ----
                     const nameEl = document.createElement('div');
                     nameEl.className = 'app-name';
                     nameEl.textContent = app.name;
                     card.appendChild(nameEl);
 
-                    // ---- 大小 ----
                     const sizeEl = document.createElement('div');
                     sizeEl.className = 'app-size';
                     sizeEl.textContent = app.size;
                     card.appendChild(sizeEl);
 
-                    // ---- 下载按钮 ----
                     const btn = document.createElement('button');
                     btn.className = 'download-btn';
                     btn.textContent = '下载';
@@ -887,7 +1161,6 @@
                     });
                     card.appendChild(btn);
 
-                    // ---- 点击卡片打开详情 ----
                     card.addEventListener('click', function() {
                         openDetail(this);
                     });
@@ -908,14 +1181,12 @@
                 currentAppId = appId;
                 currentDownloadUrl = app.download;
 
-                // 设置图标
                 detailIcon.src = app.icon;
                 detailIcon.style.display = 'block';
                 detailFallback.textContent = app.fallbackEmoji || '📱';
                 detailFallback.style.background = app.fallbackBg || 'linear-gradient(135deg, #1976d2, #42a5f5)';
                 detailFallback.classList.remove('show');
 
-                // 加载检测
                 const loadCheck = new Image();
                 loadCheck.onload = function() {
                     detailIcon.src = app.icon;
@@ -928,14 +1199,10 @@
                 };
                 loadCheck.src = app.icon;
 
-                // 名称 & 版本
                 detailName.textContent = app.name;
                 detailVersion.textContent = '版本 ' + (app.version || '1.0');
-
-                // 描述
                 detailDescription.textContent = app.description || '暂无详细介绍';
 
-                // 截图
                 screenshotsScroll.innerHTML = '';
                 const screenshots = app.screenshots || [];
                 if (screenshots.length > 0) {
@@ -961,7 +1228,6 @@
                     screenshotsScroll.appendChild(placeholder);
                 }
 
-                // 下载按钮
                 detailDownloadBtn.onclick = function() {
                     downloadApp(app.download);
                 };
@@ -994,10 +1260,33 @@
                 }
             });
 
-            // ---------- 键盘事件 ----------
+            // ---------- 警告弹窗 ----------
+            function openWarning() {
+                warningModal.classList.add('open');
+                document.body.style.overflow = 'hidden';
+            }
+
+            window.closeWarning = function() {
+                warningModal.classList.remove('open');
+                document.body.style.overflow = '';
+            };
+
+            warningBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                openWarning();
+            });
+
+            warningModal.addEventListener('click', function(e) {
+                if (e.target === warningModal) {
+                    closeWarning();
+                }
+            });
+
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
-                    if (imageViewer.classList.contains('open')) {
+                    if (warningModal.classList.contains('open')) {
+                        closeWarning();
+                    } else if (imageViewer.classList.contains('open')) {
                         closeImageViewer();
                     } else if (detailFullscreen.classList.contains('open')) {
                         closeDetail();
@@ -1013,10 +1302,7 @@
             // ---------- 启动 ----------
             renderCards();
 
-            // 暴露重新渲染（调试用）
-            window.__renderCards = renderCards;
-
-            console.log('🛍️ 桌宠商店已准备就绪');
+            console.log('🛍️ 桌宠商店已准备就绪 | 红火蚁已加入！');
         })();
     </script>
 </body>
