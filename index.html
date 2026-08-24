@@ -300,8 +300,11 @@
             border-radius: 22px;
             box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
             flex-shrink: 0;
-            background: #f5f7fa;
-            border: 3px solid #42a5f5;
+            background: transparent;
+            border: 3px solid transparent;
+            background-image: linear-gradient(135deg, #1976d2, #42a5f5);
+            background-origin: border-box;
+            background-clip: border-box;
             overflow: hidden;
         }
 
@@ -439,10 +442,12 @@
             border-radius: 20px;
             overflow: hidden;
             flex-shrink: 0;
-            background: #f5f5fa;
-            position: relative;
+            background: transparent;
+            border: 3px solid transparent;
+            background-image: linear-gradient(135deg, #1976d2, #42a5f5);
+            background-origin: border-box;
+            background-clip: border-box;
             box-shadow: 0 4px 16px rgba(25, 118, 210, 0.15);
-            border: 3px solid #42a5f5; 
             box-sizing: border-box;
         }
 
@@ -481,12 +486,104 @@
             line-height: 1.2;
         }
 
+        .detail-version-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 2px;
+            flex-wrap: wrap;
+        }
+
         .detail-version {
             font-size: 13px;
             color: #78909c;
             font-weight: 500;
         }
 
+        /* ---- 预览按钮 ---- */
+        .preview-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 12px;
+            border-radius: 30px;
+            border: none;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            background: linear-gradient(135deg, #1976d2, #42a5f5);
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(25, 118, 210, 0.25);
+            height: 26px;
+            letter-spacing: 0.3px;
+        }
+
+        .preview-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 4px 14px rgba(25, 118, 210, 0.35);
+        }
+
+        .preview-btn:active {
+            transform: scale(0.92);
+        }
+
+        .preview-btn.active {
+            background: linear-gradient(135deg, #e53935, #ef5350);
+            box-shadow: 0 2px 8px rgba(229, 57, 53, 0.3);
+        }
+
+        .preview-btn.active:hover {
+            box-shadow: 0 4px 14px rgba(229, 57, 53, 0.4);
+        }
+
+        /* ---- 桌宠预览容器 ---- */
+        .pet-preview-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1050;
+            display: none;
+        }
+
+        .pet-preview-container.show {
+            display: block;
+        }
+
+        .pet-preview {
+            position: fixed;
+            pointer-events: auto;
+            cursor: grab;
+            z-index: 1060;
+            touch-action: none;
+            user-select: none;
+            -webkit-user-drag: none;
+            filter: drop-shadow(0 8px 30px rgba(0, 0, 0, 0.25));
+            transition: filter 0.2s ease;
+            width: 120px;
+            height: 120px;
+        }
+
+        .pet-preview:active {
+            cursor: grabbing;
+        }
+
+        .pet-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+            pointer-events: none;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(2px);
+            -webkit-backdrop-filter: blur(2px);
+        }
+
+        /* ---- 截图 ---- */
         .screenshots-container {
             padding: 20px 20px 10px;
             flex-shrink: 0;
@@ -820,6 +917,10 @@
             .warning-modal-header h2 {
                 font-size: 18px;
             }
+            .pet-preview {
+                width: 90px;
+                height: 90px;
+            }
         }
 
         @media (max-width: 380px) {
@@ -833,6 +934,10 @@
                 width: 22px;
                 height: 22px;
                 font-size: 12px;
+            }
+            .pet-preview {
+                width: 72px;
+                height: 72px;
             }
         }
     </style>
@@ -872,7 +977,10 @@
                 </div>
                 <div class="detail-title-block">
                     <span class="detail-app-name" id="detailName">蚁后桌宠</span>
-                    <span class="detail-version" id="detailVersion">版本 1.1</span>
+                    <div class="detail-version-row">
+                        <span class="detail-version" id="detailVersion">版本 1.1</span>
+                        <button class="preview-btn" id="previewBtn">👁️ 预览</button>
+                    </div>
                 </div>
             </div>
             <button class="close-detail-btn" onclick="closeDetail()">✕</button>
@@ -886,6 +994,13 @@
         </div>
         <div class="detail-download-wrapper">
             <button class="detail-download-btn" id="detailDownloadBtn">下载应用</button>
+        </div>
+    </div>
+
+    <!-- 桌宠预览（浮动在详情页之上） -->
+    <div class="pet-preview-container" id="petPreviewContainer">
+        <div class="pet-preview" id="petPreview">
+            <img id="petGif" src="" alt="桌宠预览" draggable="false">
         </div>
     </div>
 
@@ -1027,7 +1142,6 @@
                 fallbackEmoji: '🐛',
                 fallbackBg: 'linear-gradient(135deg, #3E2723, #6D4C41)'
             }, {
-                // 新增：红火蚁
                 id: 'redfireant',
                 name: '红火蚁',
                 icon: '红火蚁.png',
@@ -1063,9 +1177,200 @@
             const warningModal = document.getElementById('warningModal');
             const warningBtn = document.getElementById('warningBtn');
 
+            // 预览相关
+            const previewBtn = document.getElementById('previewBtn');
+            const petContainer = document.getElementById('petPreviewContainer');
+            const petPreview = document.getElementById('petPreview');
+            const petGif = document.getElementById('petGif');
+
             let currentDownloadUrl = '蚁后.apk';
             let toastTimer = null;
             let currentAppId = null;
+            let currentAppName = '';
+
+            // 桌宠拖拽状态
+            let isDragging = false;
+            let dragStartX = 0;
+            let dragStartY = 0;
+            let petOffsetX = 0;
+            let petOffsetY = 0;
+            let isPetVisible = false;
+            let audioCtx = null;
+
+            // 判断是否为移动端
+            const isMobile = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+            // ---------- 音效 ----------
+            function playClickSound() {
+                try {
+                    // 使用 AudioContext 播放 1.mp3
+                    if (!audioCtx) {
+                        audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+                    }
+                    // 用 <audio> 标签播放更简单可靠
+                    const audio = new Audio('1.mp3');
+                    audio.volume = 0.6;
+                    audio.play().catch(function(e) {
+                        // 静默处理自动播放被阻止
+                        console.log('音频播放被阻止，用户交互后重试');
+                    });
+                } catch (e) {
+                    console.log('音频播放失败:', e);
+                }
+            }
+
+            // ---------- 预览切换 ----------
+            function togglePreview() {
+                if (!currentAppName) return;
+
+                if (isPetVisible) {
+                    hidePet();
+                } else {
+                    showPet();
+                }
+            }
+
+            function showPet() {
+                if (!currentAppName) return;
+                const gifName = currentAppName + '.gif';
+                petGif.src = gifName;
+                petGif.alt = currentAppName + ' 桌宠';
+
+                // 重置位置到屏幕中央偏下
+                const w = window.innerWidth;
+                const h = window.innerHeight;
+                const size = Math.min(w, h) * 0.2;
+                petPreview.style.width = Math.max(80, Math.min(150, size)) + 'px';
+                petPreview.style.height = petPreview.style.width;
+
+                // 初始位置：中央偏下
+                const pw = parseInt(petPreview.style.width);
+                const ph = parseInt(petPreview.style.height);
+                petPreview.style.left = ((w - pw) / 2) + 'px';
+                petPreview.style.top = ((h - ph) * 0.55) + 'px';
+
+                petContainer.classList.add('show');
+                previewBtn.textContent = '✕ 关闭';
+                previewBtn.classList.add('active');
+                isPetVisible = true;
+            }
+
+            function hidePet() {
+                petContainer.classList.remove('show');
+                previewBtn.textContent = '👁️ 预览';
+                previewBtn.classList.remove('active');
+                isPetVisible = false;
+            }
+
+            // ---------- 桌宠拖拽 (鼠标) ----------
+            petPreview.addEventListener('mousedown', function(e) {
+                if (e.button !== 0) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                const rect = petPreview.getBoundingClientRect();
+                dragStartX = e.clientX;
+                dragStartY = e.clientY;
+                petOffsetX = dragStartX - rect.left;
+                petOffsetY = dragStartY - rect.top;
+                isDragging = false;
+
+                // 记录初始位置用于判断是否点击
+                const startX = e.clientX;
+                const startY = e.clientY;
+
+                function onMove(ev) {
+                    const dx = ev.clientX - startX;
+                    const dy = ev.clientY - startY;
+                    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                        isDragging = true;
+                    }
+                    if (isDragging) {
+                        let left = ev.clientX - petOffsetX;
+                        let top = ev.clientY - petOffsetY;
+                        // 边界限制
+                        const pw = petPreview.offsetWidth || 120;
+                        const ph = petPreview.offsetHeight || 120;
+                        const maxX = window.innerWidth - pw;
+                        const maxY = window.innerHeight - ph;
+                        left = Math.max(0, Math.min(maxX, left));
+                        top = Math.max(0, Math.min(maxY, top));
+                        petPreview.style.left = left + 'px';
+                        petPreview.style.top = top + 'px';
+                    }
+                }
+
+                function onUp(ev) {
+                    document.removeEventListener('mousemove', onMove);
+                    document.removeEventListener('mouseup', onUp);
+                    // 如果几乎没有移动，视为点击
+                    if (!isDragging) {
+                        playClickSound();
+                    }
+                    isDragging = false;
+                }
+
+                document.addEventListener('mousemove', onMove);
+                document.addEventListener('mouseup', onUp);
+            });
+
+            // ---------- 桌宠拖拽 (触摸) ----------
+            petPreview.addEventListener('touchstart', function(e) {
+                const touch = e.touches[0];
+                if (!touch) return;
+                e.preventDefault();
+                e.stopPropagation();
+
+                const rect = petPreview.getBoundingClientRect();
+                dragStartX = touch.clientX;
+                dragStartY = touch.clientY;
+                petOffsetX = dragStartX - rect.left;
+                petOffsetY = dragStartY - rect.top;
+                isDragging = false;
+
+                const startX = touch.clientX;
+                const startY = touch.clientY;
+
+                function onMove(ev) {
+                    const t = ev.touches[0];
+                    if (!t) return;
+                    const dx = t.clientX - startX;
+                    const dy = t.clientY - startY;
+                    if (Math.abs(dx) > 5 || Math.abs(dy) > 5) {
+                        isDragging = true;
+                    }
+                    if (isDragging) {
+                        let left = t.clientX - petOffsetX;
+                        let top = t.clientY - petOffsetY;
+                        const pw = petPreview.offsetWidth || 120;
+                        const ph = petPreview.offsetHeight || 120;
+                        const maxX = window.innerWidth - pw;
+                        const maxY = window.innerHeight - ph;
+                        left = Math.max(0, Math.min(maxX, left));
+                        top = Math.max(0, Math.min(maxY, top));
+                        petPreview.style.left = left + 'px';
+                        petPreview.style.top = top + 'px';
+                    }
+                }
+
+                function onUp(ev) {
+                    document.removeEventListener('touchmove', onMove);
+                    document.removeEventListener('touchend', onUp);
+                    if (!isDragging) {
+                        playClickSound();
+                    }
+                    isDragging = false;
+                }
+
+                document.addEventListener('touchmove', onMove, { passive: false });
+                document.addEventListener('touchend', onUp);
+            }, { passive: true });
+
+            // ---------- 预览按钮点击 ----------
+            previewBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                togglePreview();
+            });
 
             // ---------- Toast ----------
             function showToast(msg) {
@@ -1182,9 +1487,21 @@
                 const app = APPS.find(a => a.id === appId);
                 if (!app) return;
 
+                // 如果有预览打开，先关闭
+                if (isPetVisible) {
+                    hidePet();
+                }
+
                 currentAppId = appId;
+                currentAppName = app.name;
                 currentDownloadUrl = app.download;
 
+                // 桌宠商店不显示预览按钮
+                if (app.id === 'store') {
+                previewBtn.style.display = 'none';
+} else {
+                previewBtn.style.display = 'inline-flex';
+}
                 detailIcon.src = app.icon;
                 detailIcon.style.display = 'block';
                 detailFallback.textContent = app.fallbackEmoji || '📱';
@@ -1206,6 +1523,10 @@
                 detailName.textContent = app.name;
                 detailVersion.textContent = '版本 ' + (app.version || '1.0');
                 detailDescription.textContent = app.description || '暂无详细介绍';
+
+                // 重置预览按钮状态
+                previewBtn.textContent = '👁️ 预览';
+                previewBtn.classList.remove('active');
 
                 screenshotsScroll.innerHTML = '';
                 const screenshots = app.screenshots || [];
@@ -1238,10 +1559,18 @@
 
                 detailFullscreen.classList.add('open');
                 document.body.style.overflow = 'hidden';
+
+                // 重置音频上下文，解决自动播放问题
+                if (audioCtx) {
+                    audioCtx.resume().catch(function() {});
+                }
             };
 
             // ---------- 关闭详情 ----------
             window.closeDetail = function() {
+                if (isPetVisible) {
+                    hidePet();
+                }
                 detailFullscreen.classList.remove('open');
                 document.body.style.overflow = '';
             };
@@ -1286,6 +1615,7 @@
                 }
             });
 
+            // ---------- 键盘快捷键 ----------
             document.addEventListener('keydown', function(e) {
                 if (e.key === 'Escape') {
                     if (warningModal.classList.contains('open')) {
@@ -1298,6 +1628,23 @@
                 }
             });
 
+            // ---------- 窗口大小变化时调整预览位置 ----------
+            window.addEventListener('resize', function() {
+                if (isPetVisible) {
+                    const rect = petPreview.getBoundingClientRect();
+                    const pw = petPreview.offsetWidth || 120;
+                    const ph = petPreview.offsetHeight || 120;
+                    const maxX = window.innerWidth - pw;
+                    const maxY = window.innerHeight - ph;
+                    let left = rect.left;
+                    let top = rect.top;
+                    left = Math.max(0, Math.min(maxX, left));
+                    top = Math.max(0, Math.min(maxY, top));
+                    petPreview.style.left = left + 'px';
+                    petPreview.style.top = top + 'px';
+                }
+            });
+
             // ---------- 搜索 ----------
             searchInput.addEventListener('input', function() {
                 renderCards(this.value);
@@ -1307,6 +1654,7 @@
             renderCards();
 
             console.log('🛍️ 桌宠商店已准备就绪 | 红火蚁已加入！');
+            console.log('👁️ 点击详情页版本号旁的"预览"按钮，可召唤对应桌宠GIF！');
         })();
     </script>
 </body>
