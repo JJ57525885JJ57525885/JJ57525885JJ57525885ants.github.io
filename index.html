@@ -1239,9 +1239,9 @@
                 // 重置位置到屏幕中央偏下
                 const w = window.innerWidth;
                 const h = window.innerHeight;
-                const size = Math.min(w, h) * 0.2;
-                petPreview.style.width = Math.max(80, Math.min(150, size)) + 'px';
-                petPreview.style.height = petPreview.style.width;
+                const size = Math.min(w, h) * 0.4;   // 从 0.2 改为 0.4，整体放大一倍
+petPreview.style.width = Math.max(160, Math.min(300, size)) + 'px';   // 放大边界值
+petPreview.style.height = petPreview.style.width;
 
                 // 初始位置：中央偏下
                 const pw = parseInt(petPreview.style.width);
