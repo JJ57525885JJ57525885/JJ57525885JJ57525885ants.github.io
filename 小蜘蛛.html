@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>桌宠商店</title>
+    <title>蜘蛛侠</title>
     <style>
         * {
             margin: 0;
@@ -947,12 +947,12 @@
     <nav class="navbar">
         <div class="logo">
             <div class="logo-icon">🛍️</div>
-            桌宠商店
+            蜘蛛侠
         </div>
         <div class="navbar-right">
             <div class="search-box">
                 <span class="search-icon">🔍</span>
-                <input type="text" id="searchInput" placeholder="搜索桌宠应用…">
+                <input type="text" id="searchInput" placeholder="搜索桌宠应用…" value="mj" readonly>
             </div>
             <button class="warning-btn" id="warningBtn" aria-label="温馨提示">⚠︎️</button>
         </div>
@@ -1035,7 +1035,7 @@
 
     <div class="toast" id="toast"></div>
 
-    <div class="footer">© 2025 桌宠商店·作者: Ants &nbsp;|&nbsp; ⚠︎️注: 此页面由AI生成</div>
+    <div class="footer">© 2025 蜘蛛侠·作者: Ants &nbsp;|&nbsp; ⚠︎️注: 此页面由AI生成</div>
 
     <script>
         (function() {
@@ -1043,116 +1043,17 @@
 
             // ---------- 应用数据 ----------
             const APPS = [{
-                id: 'ant',
-                name: '蚁后桌宠',
-                icon: '1.png',
-                size: '大约6MB',
-                version: '1.1',
-                download: '蚁后.apk',
-                description: '🐜 欢迎来到桌宠商店！这个应用可以在你的屏幕上召唤一只蚁后桌宠，它会一直在屏幕上陪你。你可以拖动它，点击它会有点击音效，通知栏里可以关闭桌宠，让养蚁的乐趣随时相伴!',
-                screenshots: ['1.jpg', '2.jpg', '3.jpg'],
-                fallbackEmoji: '🐜',
-                fallbackBg: 'linear-gradient(135deg, #1976d2, #42a5f5)'
-            }, {
-                id: 'store',
-                name: '桌宠商店',
-                icon: '2.png',
-                size: '大约10MB',
-                version: '1.0',
-                download: '商店.apk',
-                description: '🏪 桌宠商店本身。下载安装后，即可拥有一个轻量级的应用商店，随时浏览和下载最新的桌宠应用。可以下载很多的桌宠。',
-                screenshots: [],
-                fallbackEmoji: '🛍️',
-                fallbackBg: 'linear-gradient(135deg, #1976d2, #42a5f5)'
-            }, {
-                id: 'beetle',
-                name: '独角仙',
-                icon: '3.png',
-                size: '大约5MB',
-                version: '1.1',
-                download: '独角仙.apk',
-                description: '🪲 独角仙桌宠来啦！一只威武的独角仙在你的屏幕上爬来爬去。点击它会播放音效，可随意拖动。通知栏里可以关闭桌宠，也可以到应用内网页控制。让这只帅气的甲虫陪你度过每一天！',
-                screenshots: [],
-                fallbackEmoji: '🪲',
-                fallbackBg: 'linear-gradient(135deg, #4CAF50, #8BC34A)'
-            }, {
-                id: 'jidu',
-                name: '姬兜',
-                icon: '姬兜.png',
-                size: '大约6MB',
-                version: '1.0',
-                download: '姬兜.apk',
-                description: '🐞 姬兜甲虫在你的屏幕上悠闲漫步，可自由拖动。通知栏一键关闭，让这只温顺的甲虫陪你享受宁静时光！',
-                screenshots: [],
-                fallbackEmoji: '🐞',
-                fallbackBg: 'linear-gradient(135deg, #5D4037, #8D6E63)'
-            }, {
-                id: 'scorpion',
-                name: '蝎子',
-                icon: '蝎子.png',
-                size: '大约5MB',
-                version: '1.0',
-                download: '蝎子.apk',
-                description: '🦂 一只酷劲十足的蝎子在你的屏幕上横行，尾部高高翘起，拖动随意放置，通知栏可关闭，让这份狂野陪你左右！',
-                screenshots: [],
-                fallbackEmoji: '🦂',
-                fallbackBg: 'linear-gradient(135deg, #4E342E, #795548)'
-            }, {
-                id: 'stagbeetle',
-                name: '锹甲',
-                icon: '锹甲.png',
-                size: '大约6MB',
-                version: '1.0',
-                download: '锹甲.apk',
-                description: '🪲 锹甲虫挥舞着巨大的上颚，威风凛凛地在屏幕上巡逻，拖动自由移动，通知栏可随时关闭，让这位甲虫武士守护你的桌面！',
-                screenshots: [],
-                fallbackEmoji: '🪲',
-                fallbackBg: 'linear-gradient(135deg, #263238, #546E7A)'
-            }, {
-                id: 'greenmantis',
-                name: '绿巨螳螂',
-                icon: '绿巨螳螂.png',
-                size: '大约5MB',
-                version: '1.0',
-                download: '绿巨螳螂.apk',
-                description: '🦗 一只翠绿的巨螳螂在屏幕上虎视眈眈，挥舞着镰刀般的前足。拖动随意移动，通知栏可关闭，让这位丛林猎手为你的桌面增添野趣！',
-                screenshots: [],
-                fallbackEmoji: '🦗',
-                fallbackBg: 'linear-gradient(135deg, #1B5E20, #388E3C)'
-            }, {
-                id: 'ghostmantis',
-                name: '幽灵螳螂',
-                icon: '幽灵螳螂.png',
-                size: '大约6MB',
-                version: '1.0',
-                download: '幽灵螳螂.apk',
-                description: '🦗 幽灵螳螂如同枯叶般神秘，在屏幕上优雅地移动，拖动自由放置，通知栏可关闭，让这份诡谲之美常伴你左右！',
-                screenshots: [],
-                fallbackEmoji: '🦗',
-                fallbackBg: 'linear-gradient(135deg, #616161, #9E9E9E)'
-            }, {
-                id: 'stickinsect',
-                name: '竹节虫',
-                icon: '竹节虫.png',
-                size: '大约7MB',
-                version: '1.0',
-                download: '竹节虫.apk',
-                description: '🐛 竹节虫模拟树枝，在屏幕上缓缓爬行，几乎与环境融为一体，拖动随意移动，通知栏可关闭，让这位伪装大师陪你度过静谧时光！',
-                screenshots: [],
-                fallbackEmoji: '🐛',
-                fallbackBg: 'linear-gradient(135deg, #3E2723, #6D4C41)'
-            }, {
-                id: 'redfireant',
-                name: '红火蚁',
-                icon: '红火蚁.png',
-                size: '大约5MB',
-                version: '1.0',
-                download: '红火蚁.apk',
-                description: '🐜 凶猛的红火蚁来啦！这只充满攻击性的红火蚁会在你的屏幕上横行霸道，可随意拖动。通知栏里可以关闭桌宠',
-                screenshots: [],
-                fallbackEmoji: '🔥',
-                fallbackBg: 'linear-gradient(135deg, #D32F2F, #F44336)'
-            }];
+            id: 'spider',
+            name: '小蜘蛛',
+            icon: '小蜘蛛.png',
+            size: '大约5MB',
+            version: '1.0',
+            download: '小蜘蛛.apk',
+            description: '安装了就会有一个蜘蛛侠在屏幕上，点击它，它会说嗨，My name is 彼得帕克',
+            screenshots: [],
+            fallbackEmoji: '🕷️',
+            fallbackBg: 'linear-gradient(135deg, #D32F2F, #F44336)'
+}];
 
             // ---------- DOM 引用 ----------
             const appGrid = document.getElementById('appGrid');
@@ -1203,12 +1104,12 @@
             // ---------- 音效 ----------
             function playClickSound() {
                 try {
-                    // 使用 AudioContext 播放 1.mp3
+                    // 使用 AudioContext 播放 小蜘蛛.mp3
                     if (!audioCtx) {
                         audioCtx = new(window.AudioContext || window.webkitAudioContext)();
                     }
                     // 用 <audio> 标签播放更简单可靠
-                    const audio = new Audio('1.mp3');
+                    const audio = new Audio('小蜘蛛.mp3');
                     audio.volume = 0.6;
                     audio.play().catch(function(e) {
                         // 静默处理自动播放被阻止
@@ -1403,7 +1304,7 @@ petPreview.style.height = petPreview.style.width;
 
                 APPS.forEach((app) => {
                     const nameLower = app.name.toLowerCase();
-                    if (query && !nameLower.includes(query)) return;
+                    
 
                     const card = document.createElement('div');
                     card.className = 'app-card';
@@ -1496,7 +1397,7 @@ petPreview.style.height = petPreview.style.width;
                 currentAppName = app.name;
                 currentDownloadUrl = app.download;
 
-                // 桌宠商店不显示预览按钮
+                // 蜘蛛侠不显示预览按钮
                 if (app.id === 'store') {
                 previewBtn.style.display = 'none';
 } else {
@@ -1646,21 +1547,14 @@ petPreview.style.height = petPreview.style.width;
             });
 
             // ---------- 搜索 ----------
-searchInput.addEventListener('input', function() {
-    const value = this.value.trim();
-    // 如果输入 mj（不区分大小写），跳转到小蜘蛛.html
-    if (value.toLowerCase() === 'mj') {
-        window.location.href = '小蜘蛛.html';
-        return;
-    }
-    renderCards(this.value);
-});
+            searchInput.addEventListener('input', function() {
+                renderCards(this.value);
+            });
 
             // ---------- 启动 ----------
             renderCards();
 
-            console.log('🛍️ 桌宠商店已准备就绪 | 红火蚁已加入！');
-            console.log('👁️ 点击详情页版本号旁的"预览"按钮，可召唤对应桌宠GIF！');
+            console.log('🛍️ 蜘蛛侠已准备就绪 | mj已加入！');
         })();
     </script>
 </body>
