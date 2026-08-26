@@ -125,6 +125,50 @@
             position: relative;
             margin-left: 150px;
         }
+        
+        /* ---- 刷新按钮 ---- */
+       .refresh-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: none;
+            background: #e8edf2;
+            color: #546e7a;
+            font-size: 22px;
+            cursor: pointer;
+            flex-shrink: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.25s ease, box-shadow 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+       .refresh-btn:hover {
+            background: #d5dce3;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+        }
+
+        .refresh-btn:active {
+            transform: scale(0.88);
+        }
+
+        .refresh-btn.spinning {
+            animation: spin 0.7s cubic-             bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes spin {
+            0% {
+            transform: rotate(0deg) scale(1);
+        }
+            50% {
+            transform: rotate(220deg)              scale(1.08);
+        }
+            100% {
+            transform: rotate(360deg) scale(1);
+        }
+   }
 
         .warning-btn::after {
             content: '';
@@ -954,6 +998,7 @@
                 <span class="search-icon">🔍</span>
                 <input type="text" id="searchInput" placeholder="搜索桌宠应用…">
             </div>
+        <button class="refresh-btn" id="refreshBtn" aria-label="刷新图片">↻</button>    
             <button class="warning-btn" id="warningBtn" aria-label="温馨提示">⚠︎️</button>
         </div>
     </nav>
@@ -1176,7 +1221,8 @@
             const toast = document.getElementById('toast');
             const warningModal = document.getElementById('warningModal');
             const warningBtn = document.getElementById('warningBtn');
-
+            const refreshBtn = document.getElementById('refreshBtn');
+            
             // 预览相关
             const previewBtn = document.getElementById('previewBtn');
             const petContainer = document.getElementById('petPreviewContainer');
@@ -1608,6 +1654,50 @@ petPreview.style.height = petPreview.style.width;
                 e.stopPropagation();
                 openWarning();
             });
+            // ---------- ★ 刷新所有图片 ----------
+function refreshAllImages() {
+    const appIcons = document.querySelectorAll('.app-icon');
+    appIcons.forEach(img => {
+        const wrapper = img.parentElement;
+        const fallback = wrapper.querySelector('.app-icon-fallback');
+        if (fallback) fallback.classList.remove('show');
+        img.style.display = 'block';
+        const src = img.src;
+        img.src = '';
+        img.src = src;
+    });
+
+    if (detailFullscreen.classList.contains('open') && currentAppId) {
+        const app = APPS.find(a => a.id === currentAppId);
+        if (app) loadDetailIcon(app);
+    }
+
+    document.querySelectorAll('.screenshots-scroll img').forEach(img => {
+        const src = img.src;
+        img.src = '';
+        img.src = src;
+    });
+
+    if (isPetVisible && petGif.src) {
+        const src = petGif.src;
+        petGif.src = '';
+        petGif.src = src;
+    }
+
+    showToast('🔄 已刷新所有图片');
+}
+
+// ---------- ★ 刷新按钮点击事件 ----------
+refreshBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    this.classList.remove('spinning');
+    void this.offsetWidth;
+    this.classList.add('spinning');
+    refreshAllImages();
+    setTimeout(() => {
+        this.classList.remove('spinning');
+    }, 800);
+});
 
             warningModal.addEventListener('click', function(e) {
                 if (e.target === warningModal) {
